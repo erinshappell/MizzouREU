@@ -1,0 +1,30 @@
+2019-06-18 14:14:44,268 [INFO] Created log file
+2019-06-18 14:14:44,393 [INFO] Building cells.
+2019-06-18 14:14:44,515 [INFO] Building recurrent connections
+2019-06-18 14:14:44,699 [INFO] Building virtual cell stimulations for blad_spikes_low
+2019-06-18 14:14:44,717 [INFO] Building virtual cell stimulations for EUS_spikes
+2019-06-18 14:14:44,740 [INFO] Building virtual cell stimulations for PAG_spikes
+2019-06-18 14:14:44,830 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-06-18 14:14:44,830 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-06-18 14:14:44,830 [INFO] Block save every 5000 steps
+2019-06-18 14:14:47,001 [INFO]     step:5000 t_sim:500.00 ms
+2019-06-18 14:14:49,157 [INFO]     step:10000 t_sim:1000.00 ms
+2019-06-18 14:14:51,348 [INFO]     step:15000 t_sim:1500.00 ms
+2019-06-18 14:14:53,565 [INFO]     step:20000 t_sim:2000.00 ms
+2019-06-18 14:14:55,717 [INFO]     step:25000 t_sim:2500.00 ms
+2019-06-18 14:14:57,857 [INFO]     step:30000 t_sim:3000.00 ms
+2019-06-18 14:15:00,121 [INFO]     step:35000 t_sim:3500.00 ms
+2019-06-18 14:15:02,300 [INFO]     step:40000 t_sim:4000.00 ms
+2019-06-18 14:15:04,446 [INFO]     step:45000 t_sim:4500.00 ms
+2019-06-18 14:15:06,616 [INFO]     step:50000 t_sim:5000.00 ms
+2019-06-18 14:15:08,741 [INFO]     step:55000 t_sim:5500.00 ms
+2019-06-18 14:15:10,883 [INFO]     step:60000 t_sim:6000.00 ms
+2019-06-18 14:15:12,999 [INFO]     step:65000 t_sim:6500.00 ms
+2019-06-18 14:15:15,140 [INFO]     step:70000 t_sim:7000.00 ms
+2019-06-18 14:15:17,392 [INFO]     step:75000 t_sim:7500.00 ms
+2019-06-18 14:15:19,577 [INFO]     step:80000 t_sim:8000.00 ms
+2019-06-18 14:15:22,083 [INFO]     step:85000 t_sim:8500.00 ms
+2019-06-18 14:15:24,414 [INFO]     step:90000 t_sim:9000.00 ms
+2019-06-18 14:15:27,011 [INFO]     step:95000 t_sim:9500.00 ms
+2019-06-18 14:15:29,218 [INFO]     step:100000 t_sim:10000.00 ms
+2019-06-18 14:15:30,993 [INFO] Simulation completed in 46.16 seconds 
