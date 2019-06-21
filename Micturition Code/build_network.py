@@ -148,6 +148,26 @@ net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IN
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
+# Blad afferent --> PAG afferent (EES)
+net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='PAGaff'),
+                   connection_rule=one_to_one,
+                   syn_weight=12.0e-03, 
+                   target_sections=['somatic'],
+                   delay=3000.0,
+                   distance_range=[0.0, 300.0],
+                   dynamics_params='AMPA_ExcToExc.json',
+                   model_template='Exp2Syn')
+
+# PAG afferent --> EUS afferent (EES)
+net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSaff'),
+                   connection_rule=one_to_one,
+                   syn_weight=12.0e-03, 
+                   target_sections=['somatic'],
+                   delay=2.0,
+                   distance_range=[0.0, 300.0],
+                   dynamics_params='GABA_InhToInh.json',
+                   model_template='Exp2Syn')
+
 # INd --> PGN (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='IND'), target=net.nodes(pop_name='PGN'),
                    connection_rule=one_to_one,
@@ -178,7 +198,7 @@ net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
-# EUS afferent --> INm+
+# EUS afferent --> INm+ (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
                    syn_weight=10.0e-03, # changed from 12E-4 to 10E-3 (EES)
@@ -188,7 +208,7 @@ net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IN
                    dynamics_params='AMPA_ExcToExc.json', 
                    model_template='Exp2Syn')
 
-# PAG afferent --> INm+
+# PAG afferent --> INm+ 
 net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
                    syn_weight=12.0e-03, 
@@ -198,18 +218,7 @@ net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IN
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
-# added connection PAG afferent --> PGN (EES) 
-# PAG afferent --> PGN (de Groat et al. 2013)
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='PGN'),
-                   connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
-                   target_sections=['somatic'],
-                   delay=2.0,
-                   distance_range=[0.0, 300.0],
-                   dynamics_params='AMPA_ExcToExc.json',
-                   model_template='Exp2Syn')
-
-# EUS afferent --> INm-
+# EUS afferent --> INm-(Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
                    connection_rule=one_to_one,
                    syn_weight=16.0e-03,
@@ -299,7 +308,7 @@ net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EU
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
 
-# EUS afferent --> EUS MN
+# EUS afferent --> EUS MN (Beckel et al. 2015)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=one_to_one,
                    syn_weight=12.0e-03,

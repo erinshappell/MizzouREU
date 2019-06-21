@@ -69,7 +69,7 @@ plt.plot(PAGspkt[:,0],PAGspkt[:,1],'m.',label='PAG aff')
 
 
 
-plt.xlabel('time (ms)')
+plt.xlabel('Time (t) [ms]')
 plt.legend()
 
 # Plot INM+, INM-, IND, FB
@@ -86,7 +86,7 @@ plt.plot(INDspkt[:,0],INDspkt[:,1]-30,'g.',label='IND')
 FBspkt = rast[np.in1d(rast[:,1],FB_gids),:]
 plt.plot(FBspkt[:,0],FBspkt[:,1]-50,'k.',label='FB')
 
-plt.xlabel('time (ms)')
+plt.xlabel('Time (t) [ms]')
 plt.legend()
 
 # Plot SPN(PGN), Hypo, MPG, IMG
@@ -103,8 +103,9 @@ plt.plot(MPGspkt[:,0],MPGspkt[:,1]-70,'c.',label='MPG')
 Hypospkt = rast[np.in1d(rast[:,1],Hypo_gids),:]
 plt.plot(Hypospkt[:,0],Hypospkt[:,1]-40,'m.',label='Hypo')
 
-plt.xlabel('time (ms)')
+plt.xlabel('Time (t) [ms]')
 plt.legend()
+
 # Motor neurons
 plt.figure()
 EUSmnspkt = rast[np.in1d(rast[:,1],EUSmn_gids),:]
@@ -113,8 +114,11 @@ plt.plot(EUSmnspkt[:,0],EUSmnspkt[:,1],'r.',label='EUSmn')
 Bladmnspkt = rast[np.in1d(rast[:,1],Bladmn_gids),:]
 plt.plot(Bladmnspkt[:,0],Bladmnspkt[:,1],'g.',label='Bladmn')
 
-plt.xlabel('time (ms)')
+plt.xlabel('Time (t) [ms]')
 plt.legend()
+
+
+
 
 #Plot averaged frequency
 #plt.figure()
