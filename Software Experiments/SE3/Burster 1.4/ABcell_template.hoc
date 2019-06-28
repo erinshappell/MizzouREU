@@ -1,0 +1,87 @@
+/////////////////////
+// Model Templates //
+/////////////////////
+
+begintemplate ABcell
+	public soma, axon
+	create soma, axon
+
+	public ncl
+	objref ncl
+
+	proc init() {
+		ncl = new List()
+
+		/////// topology ////////
+    		create soma, axon
+		connect axon(0), soma(1)
+
+		/////// geometry ////////
+		soma {
+			nseg=1
+			L=31.83098861837907e3		// (micrometer)
+			diam=1e3		// (micrometer)
+	    	}
+
+		axon {
+			nseg=1
+			L=31.83098861837907e3		// (micrometer)
+			diam=1e3		// (micrometer)
+		}
+
+		/////// biophysics //////
+		soma {
+			cm = 9e-3		// (microF/cm2)
+			Ra = 10000	// (ohm-cm)
+			Rm = 30000	// (ohm-cm2)
+			
+			insert leak
+			insert cat
+			insert cas
+			insert kdr
+			insert kA
+			insert kca
+			insert capool
+	    	}
+
+		axon {
+			cm = 1.5e-3		// (microF/cm2)
+			Ra = 10000	// (ohm-cm)
+			Rm = 30000	// (ohm-cm2)
+			
+			insert leak
+			glbar_leak = 0.0000018e-3 //1/Rm // (siemens/cm2)
+			el_leak = -60	// (mV)
+
+			insert na
+			insert kdr
+
+		}
+		soma {
+			el_leak = -50	// (mV)
+			glbar_leak = 0.000045e-3 //1/Rm // (siemens/cm2)
+
+			eca = 120		// (mV)
+			gcatbar_cat = 0.0552e-3	// (siemens/cm2)
+			gcasbar_cas = 0.055e-3	// (siemens/cm2)
+			
+			ek = -80		// (mV)
+			gkdrbar_kdr = 1.890e-3	// (siemens/cm2)
+			gkAbar_kA = 0.200e-3	// (siemens/cm2)
+			gkcabar_kca = 0.500e-3	// (siemens/cm2)
+
+			taucas_capool = 303	// (ms)
+			cainf_capool = 500e-6	// (mM)
+			casi = cainf_capool
+		}
+
+		axon {
+			ena = 50		// (mV)
+			gnabar_na = 0.300e-3	// (siemens/cm2)
+
+			ek =-80			// (mV)
+			gkdrbar_kdr = 0.0525e-3	// (siemens/cm2)
+
+		}
+	}
+endtemplate ABcell

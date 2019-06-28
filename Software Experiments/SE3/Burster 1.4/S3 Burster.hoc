@@ -1,0 +1,124 @@
+//load_file("nrngui.hoc")
+load_file("stdgui.hoc")
+load_file("ABcell_template.hoc")
+
+
+
+////////////////
+// Parameters //
+////////////////
+
+objref AB
+AB = new ABcell()
+
+maxtime = 1000 //8 //80000 //200000
+
+///// Pyramidal v graphs scale ////
+xmin_v = 0
+xmax_v = maxtime
+ymin_v = -100
+ymax_v = 50
+
+///// AMPA W graphs scale ////
+xmin_W = 0
+xmax_W = maxtime
+ymin_W = -1
+ymax_W = 1
+
+///// current clamp ////
+delay = 200		//(ms)
+duration = 600	//(ms)
+amplitude = 0 //100	//(pA)
+
+objref ccl
+AB.soma ccl = new currentclamp(0.5)
+ccl.del = delay	// (ms)
+ccl.dur = duration		// (ms)
+ccl.amp = amplitude*1e-3		// (nA)
+
+///// simulation control ////
+secondorder = 2
+dt = 0.05	// (ms)
+tstop = maxtime	// (ms)
+v_init = -50	// (mV)
+
+SubVBoxNum = 3
+objref MainHBoxObj,SubVBoxObj[SubVBoxNum]
+
+proc MainBox() { local i
+		MainHBoxObj = new HBox()
+		for i=0,SubVBoxNum-1 SubVBoxObj[i] = new VBox()
+		SubVBoxObj[0].intercept(1)
+			newPlotVoltage()
+			newPlotCurrent()
+			newPlotVoltage2()
+			newPlotCurrent2()
+			newPlotCa()
+		SubVBoxObj[0].intercept(0)
+		SubVBoxObj[1].intercept(1)
+			nrnsecmenu(.5,1)
+			access AB.axon
+			nrnsecmenu(.5,1)
+		SubVBoxObj[1].intercept(0)
+		SubVBoxObj[2].intercept(1)
+			nrncontrolmenu()
+			xpanel(" ")
+				xbutton("QUIT","quit()")
+			xpanel(0)
+			nrnpointmenu(ccl)
+		SubVBoxObj[2].intercept(0)
+		MainHBoxObj.intercept(1)
+			for i=0,SubVBoxNum-1 SubVBoxObj[i].map()
+		MainHBoxObj.intercept(0)
+		MainHBoxObj.map("Burst Tutorial",10,25,800,600)
+}
+
+strdef tstr,tstr1
+
+proc newPlotVoltage() {
+	newPlot(0,tstop,-100,50)
+	graphItem.save_name("graphList[0].")
+	graphList[0].append(graphItem)
+	graphItem.addexpr("AB.soma.v(.5)")
+	graphItem.label(.08,.925,"mV")
+}
+proc newPlotVoltage2() {
+	newPlot(0,tstop,-100,50)
+	graphItem.save_name("graphList[1].")
+	graphList[0].append(graphItem)
+	graphItem.addexpr("AB.axon.v(.5)")
+	graphItem.label(.08,.925,"mV")
+}
+proc newPlotCurrent() {
+	newPlot(0,tstop,-1,1)
+	graphItem.save_name("graphList[2].")
+	graphList[1].append(graphItem)
+	graphItem.addexpr("AB.soma.il_leak",1,2)
+	graphItem.addexpr("AB.soma.icas_cas",2,2)
+	graphItem.addexpr("AB.soma.icat_cat",3,2)
+	graphItem.addexpr("AB.soma.ia_kA",4,2)
+	graphItem.addexpr("AB.soma.ikd_kdr",5,2)
+	graphItem.addexpr("AB.soma.ikca_kca",6,2)
+	tstr1 = units(&AB.soma.il_leak)
+	graphItem.label(.08,.925,tstr1)
+}
+proc newPlotCurrent2() {
+	newPlot(0,tstop,-1,1)
+	graphItem.save_name("graphList[2].")
+	graphList[1].append(graphItem)
+	graphItem.addexpr("AB.axon.il_leak",1,2)
+	graphItem.addexpr("AB.axon.inaplot_na",2,2)
+	graphItem.addexpr("AB.axon.ikd_kdr",3,2)
+	tstr1 = units(&AB.axon.il_leak)
+	graphItem.label(.08,.925,tstr1)
+}
+proc newPlotCa() {
+	newPlot(0,tstop,-.1,.1)
+	graphItem.save_name("graphList[2].")
+	graphList[1].append(graphItem)
+	graphItem.addexpr("AB.soma.casi")
+	tstr1 = units(&AB.soma.casi)
+	graphItem.label(.08,.925,tstr1)
+}
+
+MainBox()
