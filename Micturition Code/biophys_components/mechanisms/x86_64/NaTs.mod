@@ -1,1 +1,1 @@
-../NaTs.mod
+../modfiles//NaTs.mod

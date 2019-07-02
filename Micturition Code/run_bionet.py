@@ -6,6 +6,10 @@ import os, sys
 from bmtk.simulator import bionet
 from bmtk.simulator.bionet.default_setters.cell_models import loadHOC
 
+# Import the synaptic depression/facilitation model
+import synapses
+synapses.load()
+
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
 def run(config_file):

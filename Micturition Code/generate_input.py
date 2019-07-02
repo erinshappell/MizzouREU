@@ -180,6 +180,7 @@ def bladder_rate(filename,input_dir,fill,void,max_v,cells,start,mid,duration):
 		# Filling
 		while spk <= mid and v_t < max_v:
 			interval = 10.0/v_t
+			# 10.0 is a scaling value needed for this simulation
 			spike_ints = np.random.poisson(interval, num_ints)
 			if cell == 0:
 				print('interval is %d' %interval)
@@ -193,8 +194,9 @@ def bladder_rate(filename,input_dir,fill,void,max_v,cells,start,mid,duration):
 					stims[cell].append(spk)
 
 			# Update current volume of bladder
-			v_t = v_0 + fill*spk*100
-	
+			v_t = v_0 + fill*spk*v_t*150 
+			# 150 is a scaling value needed for this simulation.
+
 			if cell == 0:
 				print('spk is %d' %spk)
 				print('volume is %.2f' %v_t)
@@ -249,7 +251,7 @@ if __name__ == '__main__':
     
 	# Change these for your needs	
 	start    = 0 	 #ms
-	mid 	 = 5000	 #ms
+	mid 	 = 6000	 #ms
 	duration = 10000 #ms
 	cells = [0,1,2,3,4,5,6,7,8,9]
 
@@ -273,7 +275,10 @@ if __name__ == '__main__':
 	output_file = 'EUS_spikes.csv'
 	input_dir = './'
 
-	hz = [16.0,4.0] # Need to get baseline firing rate vs. high firing rate for EUS
+	hz = [15.0,1.0]  # Using 1.0 Hz as basal firing rate of pudendal (EUS) afferent
+					 # (Habler et al. 1993)
+					 # Using high PAG firing rate of 15.0 Hz as high firing rate 
+					 # (Blok et al. 2000)
 	start = [0.0, actual_mid]
 	end= [actual_mid, 10000.0]
 
@@ -283,7 +288,10 @@ if __name__ == '__main__':
 	output_file = 'PAG_spikes.csv'
 	input_dir = './'
 
-	hz = [1.0,1.0] # Need to get baseline firing rate vs. high firing rate for PAG
+	hz = [1.0,15.0] # Using basal firing rate of pudendal (EUS) afferent for PAG afferent
+				   # 1.0 Hz (Habler et al. 1993)
+				   # Using 15.0 Hz as high firng rate of PAG afferent
+				   # (Blok et al. 2000)
 	start = [0.0, actual_mid - delay]
 	end= [actual_mid - delay, 10000.0]
 	abrupt_changing_rates(output_file, input_dir, hz, start, end, cells)

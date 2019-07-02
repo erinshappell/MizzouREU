@@ -1,1 +1,1 @@
-../capool.mod
+../modfiles//capool.mod

@@ -34,14 +34,14 @@ numBladmn = 10
 net.add_nodes(N=numBladaff, pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numEUSaff, pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numPAGaff, pop_name='PAGaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numIND, pop_name='IND',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numHypo, pop_name='Hypo',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numIND, pop_name='IND',model_type='biophysical',model_template='hoc:IND',morphology='blank.swc')
+net.add_nodes(N=numHypo, pop_name='Hypo',model_type='biophysical',model_template='hoc:HYPO',morphology='blank.swc')
 net.add_nodes(N=numINmplus, pop_name='INmplus',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numINmminus, pop_name='INmminus',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numPGN, pop_name='PGN',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numPGN, pop_name='PGN',model_type='biophysical',model_template='hoc:PGN',morphology='blank.swc')
 net.add_nodes(N=numFB, pop_name='FB',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numIMG, pop_name='IMG',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numMPG, pop_name='MPG',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numIMG, pop_name='IMG',model_type='biophysical',model_template='hoc:IMG',morphology='blank.swc')
+net.add_nodes(N=numMPG, pop_name='MPG',model_type='biophysical',model_template='hoc:MPG',morphology='blank.swc')
 net.add_nodes(N=numEUSmn, pop_name='EUSmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numBladmn, pop_name='Bladmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 
@@ -148,37 +148,17 @@ net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IN
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
-# Blad afferent --> PAG afferent (EES)
-net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='PAGaff'),
-                   connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
-                   target_sections=['somatic'],
-                   delay=3000.0,
-                   distance_range=[0.0, 300.0],
-                   dynamics_params='AMPA_ExcToExc.json',
-                   model_template='Exp2Syn')
-
-# PAG afferent --> EUS afferent (EES)
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSaff'),
-                   connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
-                   target_sections=['somatic'],
-                   delay=2.0,
-                   distance_range=[0.0, 300.0],
-                   dynamics_params='GABA_InhToInh.json',
-                   model_template='Exp2Syn')
-
 # INd --> PGN (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='IND'), target=net.nodes(pop_name='PGN'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
+                   syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
-# Blad afferent --> Hypogastric
+# Blad afferent --> Hypogastric (Hou et al. 2014)
 net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='Hypo'),
                    connection_rule=one_to_one,
                    syn_weight=12.0e-03,
@@ -198,25 +178,36 @@ net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
-# EUS afferent --> INm+ (Grill et al. 2016)
+# EUS afferent --> INm+ (Grill et al. 2016) **Low pass filter**
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
-                   syn_weight=10.0e-03, # changed from 12E-4 to 10E-3 (EES)
+                   syn_weight=0.5, # Using value from Tyler's NB
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
-                   dynamics_params='AMPA_ExcToExc.json', 
-                   model_template='Exp2Syn')
+                   dynamics_params='stsp.json', 
+                   model_template='Exp2Syn1_STSP')
 
-# PAG afferent --> INm+ 
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
-                   connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
-                   target_sections=['somatic'],
-                   delay=2.0,
-                   distance_range=[0.0, 300.0],
-                   dynamics_params='AMPA_ExcToExc.json',
-                   model_template='Exp2Syn')
+# EUS afferent --> INm+ (Grill et al. 2016)
+# net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
+#                    connection_rule=one_to_one,
+#                    syn_weight=12.0e-03, 
+#                    target_sections=['somatic'],
+#                    delay=2.0,
+#                    distance_range=[0.0, 300.0],
+#                    dynamics_params='GABA_InhToInh.json', 
+#                    model_template='Exp2Syn')
+
+# PAG afferent --> INm+ (Source?)
+# Using this connection instead of synaptic depression for low pass filtering
+# net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
+#                    connection_rule=one_to_one,
+#                    syn_weight=12.0e-03, 
+#                    target_sections=['somatic'],
+#                    delay=2.0,
+#                    distance_range=[0.0, 300.0],
+#                    dynamics_params='AMPA_ExcToExc.json',
+#                    model_template='Exp2Syn')
 
 # EUS afferent --> INm-(Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
@@ -298,7 +289,17 @@ net.add_edges(source=net.nodes(pop_name='IMG'), target=net.nodes(pop_name='Bladm
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
 
-# PAG aff --> EUS MN 
+# PAG aff --> Hypogastric (de Groat, et al. 2015)
+net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='Hypo'),
+                   connection_rule=one_to_one,
+                   syn_weight=12.0e-03,
+                   target_sections=['somatic'],
+                   delay=2.0,
+                   distance_range=[0.0, 300.0],
+                   dynamics_params='GABA_InhToInh.json',
+                   model_template='Exp2Syn')
+
+# PAG aff --> EUS MN (Shefchyk et al. 2001)
 net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=one_to_one,
                    syn_weight=12.0e-03,
@@ -320,8 +321,8 @@ net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='EU
 
 # Connect virtual cells to EUS, Bladder, and PAG/PMC
 Blad_aff_virt = NetworkBuilder('Blad_aff_virt') # Virtual cells delivering input to Bladder
-EUS_aff_virt = NetworkBuilder('EUS_aff_virt') # Virtual cells delivering input to EUS
-PAG_aff_virt = NetworkBuilder('PAG_aff_virt') # Virtual cells delivering input to PAG/PMC
+EUS_aff_virt = NetworkBuilder('EUS_aff_virt')   # Virtual cells delivering input to EUS
+PAG_aff_virt = NetworkBuilder('PAG_aff_virt')   # Virtual cells delivering input to PAG/PMC
 
 Blad_aff_virt.add_nodes(N=10, pop_name = 'Blad_aff_virt', model_type='virtual', potential='exc')
 EUS_aff_virt.add_nodes(N=10, pop_name = 'EUS_aff_virt', model_type='virtual', potential='exc')
