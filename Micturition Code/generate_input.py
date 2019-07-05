@@ -168,7 +168,12 @@ def bladder_rate(filename,input_dir,fill,void,max_v,cells,start,mid,duration):
 	v_0 = 0.05 # Initial volume of bladder (needs checking)
 	spk = start
 	actual_mid = 0
-	v_t = v_0 + fill*spk # Current volume of bladder
+	v_t = v_0 + fill*spk*150 # Current volume of bladder
+	# 150 is a scaling value needed for this simulation.
+
+	# Collect volume data
+	time = []
+	volume = []
 
 	for cell in cells:
 		spk = start
@@ -180,61 +185,57 @@ def bladder_rate(filename,input_dir,fill,void,max_v,cells,start,mid,duration):
 		# Filling
 		while spk <= mid and v_t < max_v:
 			interval = 10.0/v_t
-			# 10.0 is a scaling value needed for this simulation
+
 			spike_ints = np.random.poisson(interval, num_ints)
-			if cell == 0:
-				print('interval is %d' %interval)
-				print(spike_ints)
 
 			for spike_int in spike_ints:
 				if not stims.get(cell):
 					stims[cell] = []
+
 				spk += spike_int
+
+				# Update current volume of bladder
+				vol = v_0 + fill*spk*150
+				v_t = v_0 + fill*spk*150*v_t
+				# 150 is a scaling value needed for this simulation.
+
 				if spk <= duration:
 					stims[cell].append(spk)
 
-			# Update current volume of bladder
-			v_t = v_0 + fill*spk*v_t*150 
-			# 150 is a scaling value needed for this simulation.
+					# Save time and volume data for cell 0
+					if cell == 0:
+						time.append(spk)
+						volume.append(vol)		
 
-			if cell == 0:
-				print('spk is %d' %spk)
-				print('volume is %.2f' %v_t)
-
-		v_end = v_t
+		# Update value for the running total of times at which filling ended
 		actual_mid += spk
-
-		if cell == 0:
-			print('end of filling...')
-			print('v_end is %.2f' %v_end)
 
 		# Voiding
 		while spk <= duration:
 			interval = 10.0/v_t
 			spike_ints = np.random.poisson(interval, num_ints)
-
-			if cell == 0:
-				print('interval is %d' %interval)
-				print(spike_ints)
 			
 			for spike_int in spike_ints:
-
 				if not stims.get(cell):
 					stims[cell] = []
+
 				spk += spike_int
+
+				# Update current volume of bladder
+				if v_t > v_0:
+					v_t -= void*spk
+				if v_t < v_0:
+					v_t = v_0
+
+				vol = v_t
+
 				if spk <= duration:
 					stims[cell].append(spk)
 
-			# Update current volume of bladder
-			if v_t > v_0:
-				v_t -= void*spk
-			if v_t < v_0:
-				v_t = v_0
-		
-			if cell == 0:
-				print('spk is %d' %spk)
-				print('volume is %.2f' %v_t)
-			
+					# Save time and volume data for cell 0
+					if cell == 0:
+						time.append(spk)
+						volume.append(vol)
 	
 	# Write spike data to file
 	with open(os.path.join(input_dir,filename),'w') as file:
@@ -243,7 +244,7 @@ def bladder_rate(filename,input_dir,fill,void,max_v,cells,start,mid,duration):
 			file.write(str(key)+' '+','.join(str(x) for x in value)+'\n')   
 	
 	actual_mid /= len(cells) # Actual mid is average of all mids for the 10 cells
-	return actual_mid
+	return (actual_mid,time,volume)
 
 ###################################################################################################
 
@@ -269,7 +270,7 @@ if __name__ == '__main__':
 	# After bladder is full, how long should we wait before conscious activation of voiding?
 	delay = 500.0 # ms
 	
-	actual_mid = bladder_rate(output_file, input_dir, fill, void, max_v, cells, start, mid + delay, duration)
+	(actual_mid,v_time,v_vol) = bladder_rate(output_file, input_dir, fill, void, max_v, cells, start, mid + delay, duration)
 
 	# Create EUS afferent input spikes --------------
 	output_file = 'EUS_spikes.csv'
@@ -296,4 +297,89 @@ if __name__ == '__main__':
 	end= [actual_mid - delay, 10000.0]
 	abrupt_changing_rates(output_file, input_dir, hz, start, end, cells)
 
-	
+	# Plot volume -----------------------------------
+	import matplotlib.pyplot as plt 
+
+	v_vol = np.array(v_vol)
+
+	plt.figure()
+	plt.grid()
+	plt.plot(v_time,v_vol,'r')
+	plt.xlabel('Time (t) [ms]')
+	plt.ylabel('Bladder Volume (V) [ml]')
+
+	# Plot pressure ---------------------------------
+	import pandas as pd
+	FR_pgn = pd.read_csv('PGN_freqs.csv')
+	FR_pgn = np.array(FR_pgn)
+
+	# Grill function for polynomial fit according to PGN firing rate
+	# Grill, et al. 2016
+	def fire_rate(x):
+		f = 2.0E-03*x**3 - 3.3E-02*x**2 + 1.8*x - 0.5
+		return f
+
+	# Grill function for polynomial fit according to bladder volume
+	# Grill, et al. 2016
+	def blad_eq(vol):
+		f = 1.5*vol - 10
+		return f
+
+	# Get values for firing rate and bladder volume functions
+	FR_pgn_f = fire_rate(FR_pgn)
+	vol_b = blad_eq(v_vol)
+
+	# Because we have more values for FR than volume, we need to only use
+	# the FR values at the times that we have bladder volume measurements for
+	FR_pgn_plotf = []
+	for n in v_time:
+		FR_pgn_plotf.append(FR_pgn_f[n])
+
+	# Grill function returning pressure in units of cm H20
+	# Grill, et al. 2016
+	def pressure(fr,v):
+		p = []
+		for n in range(len(fr)):
+			p_n = fr[n] + v[n]
+
+			# Round negative pressure up to 0
+			if p_n < 0:
+				p_n = 0
+
+			p.append(p_n)
+
+		return p
+
+	p = pressure(FR_pgn_plotf,vol_b)
+
+	plt.figure()
+	plt.grid()
+	plt.plot(v_time,p,'g')
+	plt.xlabel('Time (t) [ms]')
+	plt.ylabel('Bladder Pressure (P) [cm H20]')
+
+	# Plot bladder afferent firing rate -------------
+
+	# Grill function returning bladder afferent firing rate in units of Hz
+	# Grill, et al. 2016
+	def blad_aff_fr(p):
+		fr = []
+		for n in range(len(p)):
+			fr_n = -3.0E-08*p[n]**5 + 1.0E-5*p[n]**4 - 1.5E-03*p[n]**3 + 7.9E-02*p[n]**2 - 0.6*p[n]
+			
+			# Round negative firing rate up to 0
+			if fr_n < 0:
+				fr_n = 0
+
+			fr.append(fr_n)
+
+		return fr 
+
+	bladaff_fr = blad_aff_fr(p)
+
+	plt.figure() 
+	plt.grid()
+	plt.plot(v_time,bladaff_fr,'m')
+	plt.xlabel('Time (t) [ms]')
+	plt.ylabel('Bladder Afferent Firing Rate [Hz]')
+	plt.show()

@@ -27,12 +27,10 @@ config_file = "simulation_config.json"
 report_name = None
 report_name, report_file = _get_cell_report(config_file, report_name)
 
+#plot_report(config_file=config_file,report_file=report_file)
 
 var_report = CellVarsFile(report_file)
 time_steps = var_report.time_trace
-
-
-
 
 
 # Plot spike raster
@@ -118,14 +116,44 @@ plt.xlabel('Time (t) [ms]')
 plt.legend()
 
 
+#Plot averaged frequency data for PGN
+plt.figure()
+plt.hist(PGNspkt[:,0],10)
 
+# Save PGN frequency data
+PGN_x = PGNspkt[:,0]
+PGN_y = PGNspkt[:,1]
 
-#Plot averaged frequency
-#plt.figure()
-#plt.hist(Bladspkt[:,0],10)
+tf = []
 
-#plt.figure()
-#plt.hist(Bladmnspkt[:,0],10)
+for n in range(len(PGN_y)):
+    if PGN_y[n] == 71:
+        tf.append(True)
+    else:
+        tf.append(False)
+
+PGN_x_0 = PGN_x[tf]
+
+low = 0
+high = 1000
+freqs = []
+tf = []
+PGN_data = PGN_x_0
+
+for i in np.arange(0,10):
+    current_data = []
+    for n in range(len(PGN_data)):
+        if PGN_data[n] >= low and PGN_data[n] <= high:
+            current_data.append(PGN_data[n])
+
+    freq = len(current_data)
+    for j in np.arange(0,1000):
+        freqs.append(int(freq))
+        
+    low += 1000
+    high += 1000
+
+np.savetxt('PGN_freqs.csv', freqs, delimiter=',')
 
 plt.show()
 #raster_plot(cells_file="network/inputPUD_hco_net_edges.h5", cell_models_file="network/inputPUD_hco_net_edge_types.csv", spikes_file="output/spikes.h5")

@@ -178,6 +178,7 @@ net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
+## STSP synapse ##
 # EUS afferent --> INm+ (Grill et al. 2016) **Low pass filter**
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
@@ -188,6 +189,7 @@ net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IN
                    dynamics_params='stsp.json', 
                    model_template='Exp2Syn1_STSP')
 
+## Original synapse ##
 # EUS afferent --> INm+ (Grill et al. 2016)
 # net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
 #                    connection_rule=one_to_one,
@@ -200,14 +202,14 @@ net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IN
 
 # PAG afferent --> INm+ (Source?)
 # Using this connection instead of synaptic depression for low pass filtering
-# net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
-#                    connection_rule=one_to_one,
-#                    syn_weight=12.0e-03, 
-#                    target_sections=['somatic'],
-#                    delay=2.0,
-#                    distance_range=[0.0, 300.0],
-#                    dynamics_params='AMPA_ExcToExc.json',
-#                    model_template='Exp2Syn')
+net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
+                   connection_rule=one_to_one,
+                   syn_weight=11.0e-03, 
+                   target_sections=['somatic'],
+                   delay=2.0,
+                   distance_range=[0.0, 300.0],
+                   dynamics_params='AMPA_ExcToExc.json',
+                   model_template='Exp2Syn')
 
 # EUS afferent --> INm-(Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
