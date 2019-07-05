@@ -339,7 +339,6 @@ Blad_aff_virt.add_edges(source=Blad_aff_virt.nodes(), target=net.nodes(pop_name=
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
     
-
 EUS_aff_virt.add_edges(source=EUS_aff_virt.nodes(), target=net.nodes(pop_name='EUSaff'),
                    connection_rule=one_to_one,
                    syn_weight=12.0e-03,
@@ -380,12 +379,11 @@ EUS_aff_virt.save_edges(output_dir=output_dir)
 PAG_aff_virt.save_nodes(output_dir=output_dir)
 PAG_aff_virt.save_edges(output_dir=output_dir)
 
-
 ###################################################################################
 #################### Create input spike trains ####################################
 ###################################################################################
 
-from bmtk.utils.spike_trains import SpikesGenerator
+#from bmtk.utils.spike_trains import SpikesGenerator
 
 #sg = SpikesGenerator(nodes='network/EUS_aff_virt_nodes.h5', t_max=10.0)
 #sg.set_rate(30.0)

@@ -115,15 +115,16 @@ plt.plot(Bladmnspkt[:,0],Bladmnspkt[:,1],'g.',label='Bladmn')
 plt.xlabel('Time (t) [ms]')
 plt.legend()
 
+# Plot averaged frequency data for PGN
+#plt.figure()
+#plt.hist(PGNspkt[:,0],10)
 
-#Plot averaged frequency data for PGN
-plt.figure()
-plt.hist(PGNspkt[:,0],10)
+#############################################
+########## Save PGN frequency data ##########
+#############################################
 
-# Save PGN frequency data
 PGN_x = PGNspkt[:,0]
 PGN_y = PGNspkt[:,1]
-
 tf = []
 
 for n in range(len(PGN_y)):
@@ -132,26 +133,38 @@ for n in range(len(PGN_y)):
     else:
         tf.append(False)
 
-PGN_x_0 = PGN_x[tf]
-
-low = 0
-high = 1000
+PGN_data = PGN_x[tf]
 freqs = []
-tf = []
-PGN_data = PGN_x_0
 
-for i in np.arange(0,10):
-    current_data = []
-    for n in range(len(PGN_data)):
-        if PGN_data[n] >= low and PGN_data[n] <= high:
-            current_data.append(PGN_data[n])
+### Code for getting averaged frequency over periods of 1000 ms (1 s)
+# low = 0
+# high = 1000
+# for i in np.arange(0,10):
+#     current_data = []
+#     for n in range(len(PGN_data)):
+#         if PGN_data[n] >= low and PGN_data[n] <= high:
+#             current_data.append(PGN_data[n])
 
-    freq = len(current_data)
-    for j in np.arange(0,1000):
-        freqs.append(int(freq))
+#     freq = len(current_data)
+#     for j in np.arange(0,100):
+#         freqs.append(int(freq))
         
-    low += 1000
-    high += 1000
+#     low += 1000
+#     high += 1000
+
+### Code for getting instantaneous frequency ###
+
+low = 0 
+
+for i in range(len(PGN_data)):
+    high = PGN_data[i]
+
+    f = int(1/(high - low)*1000)
+
+    for n in np.arange(low,high):
+        freqs.append(f)
+
+    low = high
 
 np.savetxt('PGN_freqs.csv', freqs, delimiter=',')
 

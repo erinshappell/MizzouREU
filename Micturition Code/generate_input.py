@@ -367,9 +367,9 @@ if __name__ == '__main__':
 		for n in range(len(p)):
 			fr_n = -3.0E-08*p[n]**5 + 1.0E-5*p[n]**4 - 1.5E-03*p[n]**3 + 7.9E-02*p[n]**2 - 0.6*p[n]
 			
-			# Round negative firing rate up to 0
+			# Take absolute value of negative firing rates
 			if fr_n < 0:
-				fr_n = 0
+				fr_n = -1 * fr_n
 
 			fr.append(fr_n)
 
