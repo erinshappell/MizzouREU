@@ -120,7 +120,7 @@ plt.legend()
 #plt.hist(PGNspkt[:,0],10)
 
 #############################################
-########## Save PGN frequency data ##########
+############ Save PGN spike data ############
 #############################################
 
 PGN_x = PGNspkt[:,0]
@@ -136,7 +136,7 @@ for n in range(len(PGN_y)):
 PGN_data = PGN_x[tf]
 freqs = []
 
-### Code for getting averaged frequency over periods of 1000 ms (1 s)
+### Code for getting averaged spiking over periods of 1000 ms (1 s)
 # low = 0
 # high = 1000
 # for i in np.arange(0,10):
@@ -152,7 +152,7 @@ freqs = []
 #     low += 1000
 #     high += 1000
 
-### Code for getting instantaneous frequency ###
+### Code for getting instantaneous spiking ###
 
 low = 0 
 

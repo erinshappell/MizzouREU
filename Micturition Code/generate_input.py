@@ -297,6 +297,11 @@ if __name__ == '__main__':
 	end= [actual_mid - delay, 10000.0]
 	abrupt_changing_rates(output_file, input_dir, hz, start, end, cells)
 
+	#########################################################
+	######## Plotting Bladder volume, pressure, and  ########
+	################# afferent firing rate  #################
+	#########################################################
+
 	# Plot volume -----------------------------------
 	import matplotlib.pyplot as plt 
 
@@ -382,4 +387,22 @@ if __name__ == '__main__':
 	plt.plot(v_time,bladaff_fr,'m')
 	plt.xlabel('Time (t) [ms]')
 	plt.ylabel('Bladder Afferent Firing Rate [Hz]')
+
+	# Create one figure with both the bladder volume and pressure
+	fig, ax1 = plt.subplots()
+
+	color = 'tab:red'
+	ax1.set_xlabel('Time (t) [ms]')
+	ax1.set_ylabel('Bladder Volume (V) [ml]', color=color)
+	ax1.plot(v_time, v_vol, color=color)
+	ax1.tick_params(axis='y', labelcolor=color)
+
+	ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+	color = 'tab:blue'
+	ax2.set_ylabel('Bladder Pressure (P) [cm H20]', color=color)  # we already handled the x-label with ax1
+	ax2.plot(v_time, p, color=color)
+	ax2.tick_params(axis='y', labelcolor=color)
+
+	fig.tight_layout()  # otherwise the right y-label is slightly clipped
 	plt.show()

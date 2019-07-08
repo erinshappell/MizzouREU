@@ -20,4 +20,26 @@ $ ./run.sh
 
 ```
 
-* In generate_input.py, new code has been added (but not completed) for creating the input spike train for the bladder afferent. This code gives a start to a more realistic rate increase/decrease due to bladder filling/voiding.
+* Python script generate_input.py now contains code for the following:
+  * Calculating bladder volume over a time period of 10,000 ms
+  * Calculating bladder pressure over a time period of 10,000 ms using Grill's polynomial fit equation (based on firing rate of one PGN cell calculated after a prior simulation) (Grill, et al. 2016)
+  * Calculating bladder afferent firing rate using the pressure values found in point #2 using Grill's polynomial fit equation (Grill, et al. 2016)
+  * Plotting bladder volume, pressure, and afferent firing rate over time (plot trends match up with those found in Grill's 2016 paper)
+
+* Python script plot_test.py now contains code for the following:
+  * Calculating and saving "instantaneous" PGN neuron spike rate in PGN_freqs.csv (also contains code for averaged spike rate in intervals of 1000 ms--it has been commented out but was left in the code in case it is useful in the future)
+
+* Synaptic depression (and facilitation) capabilities have now been added to this project (STSP code was provided by Tyler Banks)
+  * Synapse file was added: /biophys-components/synaptic-models/stsp.json
+  * Mod file was added and compiled: /biophys-components/mechanisms/modfiles/exp2syn-stsp.mod
+  * Tyler's script for instantiating the synapse data into our model was added /synapses.py and code for using the script was added to run_bionet.py:
+
+```python
+
+import synapses
+synapses.load()
+
+```
+
+
+
