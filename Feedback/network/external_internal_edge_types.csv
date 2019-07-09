@@ -1,0 +1,2 @@
+edge_type_id target_query source_query target_sections model_template distance_range dynamics_params delay syn_weight
+100 level=='low' * ['somatic'] exp2syn "[0.0, 10.0]" AMPA_ExcToExc.json 1.0 10.0

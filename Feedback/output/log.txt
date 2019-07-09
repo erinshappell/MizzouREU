@@ -1,0 +1,7 @@
+2019-07-09 10:56:10,101 [INFO] Created log file
+2019-07-09 10:56:10,222 [INFO] Building cells.
+2019-07-09 10:56:10,362 [INFO] Building recurrent connections
+2019-07-09 10:56:10,365 [INFO] Building virtual cell stimulations for external_spikes
+2019-07-09 10:56:10,387 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-07-09 10:56:10,388 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-07-09 10:56:10,388 [INFO] Block save every 5000 steps
