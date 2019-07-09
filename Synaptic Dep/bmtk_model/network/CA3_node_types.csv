@@ -1,0 +1,2 @@
+node_type_id pop_name model_template model_type morphology
+100 CA3e hoc:Spikingcell biophysical blank.swc

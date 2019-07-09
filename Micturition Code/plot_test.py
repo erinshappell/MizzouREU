@@ -57,17 +57,16 @@ rast = df.values
 # Plot Bladder afferent, EUS afferent, PAG afferent, IND, and Hypo on one figure
 plt.figure()
 Bladspkt = rast[np.in1d(rast[:,1],Blad_gids),:]
-plt.plot(Bladspkt[:,0],Bladspkt[:,1],'b.',label='Blad. aff')
+plt.plot(Bladspkt[:,0],Bladspkt[:,1],'b.',label='Bladder afferent')
 
 EUSspkt = rast[np.in1d(rast[:,1],EUS_gids),:]
-plt.plot(EUSspkt[:,0],EUSspkt[:,1],'r.',label='EUS aff')
+plt.plot(EUSspkt[:,0],EUSspkt[:,1],'r.',label='EUS afferent')
 
 PAGspkt = rast[np.in1d(rast[:,1],PAG_gids),:]
-plt.plot(PAGspkt[:,0],PAGspkt[:,1],'m.',label='PAG aff')
-
-
+plt.plot(PAGspkt[:,0],PAGspkt[:,1],'m.',label='PAG afferent')
 
 plt.xlabel('Time (t) [ms]')
+plt.title('Afferent Firing Times')
 plt.legend()
 
 # Plot INM+, INM-, IND, FB
@@ -85,6 +84,7 @@ FBspkt = rast[np.in1d(rast[:,1],FB_gids),:]
 plt.plot(FBspkt[:,0],FBspkt[:,1]-50,'k.',label='FB')
 
 plt.xlabel('Time (t) [ms]')
+plt.title('Interneuron Firing Times')
 plt.legend()
 
 # Plot SPN(PGN), Hypo, MPG, IMG
@@ -102,17 +102,19 @@ Hypospkt = rast[np.in1d(rast[:,1],Hypo_gids),:]
 plt.plot(Hypospkt[:,0],Hypospkt[:,1]-40,'m.',label='Hypo')
 
 plt.xlabel('Time (t) [ms]')
+plt.title('Ganglion/Preganglionic Firing Times')
 plt.legend()
 
 # Motor neurons
 plt.figure()
 EUSmnspkt = rast[np.in1d(rast[:,1],EUSmn_gids),:]
-plt.plot(EUSmnspkt[:,0],EUSmnspkt[:,1],'r.',label='EUSmn')
+plt.plot(EUSmnspkt[:,0],EUSmnspkt[:,1],'r.',label='EUS MN')
 
 Bladmnspkt = rast[np.in1d(rast[:,1],Bladmn_gids),:]
-plt.plot(Bladmnspkt[:,0],Bladmnspkt[:,1],'g.',label='Bladmn')
+plt.plot(Bladmnspkt[:,0],Bladmnspkt[:,1],'g.',label='Bladder MN')
 
 plt.xlabel('Time (t) [ms]')
+plt.title('Motor Neuron Firing Times')
 plt.legend()
 
 # Plot averaged frequency data for PGN

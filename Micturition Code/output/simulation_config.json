@@ -55,8 +55,8 @@
     }
   },
   "network": "./circuit_config.json",
-  "config_path": "/home/mizzou/MizzouREU/Micturition Code/simulation_config.json",
-  "config_dir": "/home/mizzou/MizzouREU/Micturition Code",
+  "config_path": "/home/mizzou/Micturition_bmtk/simulation_config.json",
+  "config_dir": "/home/mizzou/Micturition_bmtk",
   "components": {
     "point_neuron_models_dir": "./biophys_components/point_neuron_templates",
     "biophysical_neuron_models_dir": "./biophys_components/biophysical_neuron_templates",
