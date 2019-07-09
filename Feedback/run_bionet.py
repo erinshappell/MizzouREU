@@ -3,13 +3,14 @@ import sys
 from bmtk.simulator import bionet
 from bmtk.simulator.bionet.modules.sim_module import SimulatorMod
 from bmtk.utils.reports.spike_trains import SpikeTrains
+from bmtk.utils.reports.spike_trains import PoissonSpikeGenerator
 
 import numpy as np
 import matplotlib.pyplot as plt
 from neuron import h
 
 
-firing_rate_threshold = 10.5
+firing_rate_threshold = 5.5
 
 
 class FeedbackLoop(SimulatorMod):
@@ -42,9 +43,9 @@ class FeedbackLoop(SimulatorMod):
         # next block. For this case I'm just setting the high-level neuron to start bursting
         if firing_rate > firing_rate_threshold:
             self._spike_events = np.linspace(next_block_tstart, next_block_tstop, 500)
-            # psg = PoissonSpikeGenerator()
-            # psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
-            # self._spike_events = psg.get_times(0)
+            #psg = PoissonSpikeGenerator()
+            #psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
+            #self._spike_events = psg.get_times(0)
 
             for gid in self._high_level_neurons:
                 nc = self._netcons[gid]
@@ -107,8 +108,8 @@ class FeedbackLoop(SimulatorMod):
 
         # calculate the firing rate the the low-level neuron(s)
         fr = avg_spikes/float(block_length)
-        #if fr > 5.0:
-        #    self.activate_hln(sim, block_interval, fr)
+        #if fr > firing_rate_threshold:
+        #    self._activate_hln(sim, block_interval, fr)
 
         # set the activity of high-level neuron
         self._activate_hln(sim, block_interval, fr)

@@ -10,4 +10,4 @@ if test "" = "yes" ; then
 else
 	NRNIV="${NRNBIN}nrniv"
 fi
-"${NRNIV}" -dll "/home/mizzou/feedback_loop/biophys_components/mechanisms/x86_64/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/home/mizzou/MizzouREU/Feedback/biophys_components/mechanisms/modfiles/x86_64/.libs/libnrnmech.so" "$@"

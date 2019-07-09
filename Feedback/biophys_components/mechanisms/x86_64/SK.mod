@@ -1,1 +1,1 @@
-../modfiles//SK.mod
+../SK.mod

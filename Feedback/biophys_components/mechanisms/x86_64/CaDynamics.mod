@@ -1,1 +1,1 @@
-../modfiles//CaDynamics.mod
+../CaDynamics.mod

@@ -1,5 +1,6 @@
 /* Created by Language version: 6.2.0 */
 /* VECTORIZED */
+#define NRN_VECTORIZED 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,10 +22,18 @@ extern int _method3;
 extern double hoc_Exp(double);
 #endif
  
-#define _threadargscomma_ _p, _ppvar, _thread, _nt,
-#define _threadargs_ _p, _ppvar, _thread, _nt
+#define nrn_init _nrn_init__stp3syn
+#define _nrn_initial _nrn_initial__stp3syn
+#define nrn_cur _nrn_cur__stp3syn
+#define _nrn_current _nrn_current__stp3syn
+#define nrn_jacob _nrn_jacob__stp3syn
+#define nrn_state _nrn_state__stp3syn
+#define _net_receive _net_receive__stp3syn 
+#define state state__stp3syn 
  
+#define _threadargscomma_ _p, _ppvar, _thread, _nt,
 #define _threadargsprotocomma_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt,
+#define _threadargs_ _p, _ppvar, _thread, _nt
 #define _threadargsproto_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
@@ -160,6 +169,7 @@ static void _ode_spec(_NrnThread*, _Memb_list*, int);
 static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  
 #define _cvode_ieq _ppvar[2]._i
+ static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
  "6.2.0",
@@ -220,7 +230,7 @@ static void nrn_alloc(Prop* _prop) {
 };
  static void _net_receive(Point_process*, double*, double);
  extern Symbol* hoc_lookup(const char*);
-extern void _nrn_thread_reg(int, int, void(*f)(Datum*));
+extern void _nrn_thread_reg(int, int, void(*)(Datum*));
 extern void _nrn_thread_table_reg(int, void(*)(double*, Datum*, Datum*, _NrnThread*, int));
 extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
 extern void _cvode_abstol( Symbol**, double*, int);
@@ -235,12 +245,15 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
   hoc_register_prop_size(_mechtype, 20, 3);
+  hoc_register_dparam_semantics(_mechtype, 0, "area");
+  hoc_register_dparam_semantics(_mechtype, 1, "pntproc");
+  hoc_register_dparam_semantics(_mechtype, 2, "cvodeieq");
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
  	hoc_register_tolerance(_mechtype, _hoc_state_tol, &_atollist);
  pnt_receive[_mechtype] = _net_receive;
  pnt_receive_size[_mechtype] = 1;
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 stp3syn /local1/workspace/scratch/feedback_loop/biophys_components/mechanisms/x86_64/stp3syn.mod\n");
+ 	ivoc_help("help ?1 stp3syn /home/mizzou/MizzouREU/Feedback/biophys_components/mechanisms/modfiles/x86_64/stp3syn.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
@@ -275,10 +288,10 @@ static int _ode_spec1(_threadargsproto_);
 }
  /*END CVODE*/
  static int state (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) { {
-    n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_r)))*(- ( ( ( 1.0 ) ) / tau_r ) / ( ( ( ( - 1.0) ) ) / tau_r ) - n) ;
+    n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_r)))*(- ( ( ( 1.0 ) ) / tau_r ) / ( ( ( ( - 1.0 ) ) ) / tau_r ) - n) ;
     g = g + (1. - exp(dt*(( - 1.0 ) / tau_1)))*(- ( 0.0 ) / ( ( - 1.0 ) / tau_1 ) - g) ;
-    tau_r = tau_r + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_FDR)))*(- ( ( ( tau_r0 ) ) / tau_FDR ) / ( ( ( ( - 1.0) ) ) / tau_FDR ) - tau_r) ;
-    D = D + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_D)))*(- ( ( ( 1.0 ) ) / tau_D ) / ( ( ( ( - 1.0) ) ) / tau_D ) - D) ;
+    tau_r = tau_r + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_FDR)))*(- ( ( ( tau_r0 ) ) / tau_FDR ) / ( ( ( ( - 1.0 ) ) ) / tau_FDR ) - tau_r) ;
+    D = D + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / tau_D)))*(- ( ( ( 1.0 ) ) / tau_D ) / ( ( ( ( - 1.0 ) ) ) / tau_D ) - D) ;
    }
   return 0;
 }
@@ -288,11 +301,43 @@ static void _net_receive (_pnt, _args, _lflag) Point_process* _pnt; double* _arg
    _thread = (Datum*)0; _nt = (_NrnThread*)_pnt->_vnt;   _p = _pnt->_prop->param; _ppvar = _pnt->_prop->dparam;
   if (_tsav > t){ extern char* hoc_object_name(); hoc_execerror(hoc_object_name(_pnt->ob), ":Event arrived out of order. Must call ParallelContext.set_maxstep AFTER assigning minimum NetCon.delay");}
  _tsav = t; {
-   g = g + _args[0] * n * p0 * D ;
-   n = n - n * p0 ;
-   tau_r = tau_r - a_FDR * tau_r ;
-   D = D - a_D * p0 * n * D ;
-   } }
+     if (nrn_netrec_state_adjust && !cvode_active_){
+    /* discon state adjustment for cnexp case (rate uses no local variable) */
+    double __state = g;
+    double __primary = (g + _args[0] * n * p0 * D) - __state;
+     __primary += ( 1. - exp( 0.5*dt*( ( - 1.0 ) / tau_1 ) ) )*( - ( 0.0 ) / ( ( - 1.0 ) / tau_1 ) - __primary );
+    g += __primary;
+  } else {
+ g = g + _args[0] * n * p0 * D ;
+     }
+   if (nrn_netrec_state_adjust && !cvode_active_){
+    /* discon state adjustment for cnexp case (rate uses no local variable) */
+    double __state = n;
+    double __primary = (n - n * p0) - __state;
+     __primary += ( 1. - exp( 0.5*dt*( ( ( ( - 1.0 ) ) ) / tau_r ) ) )*( - ( ( ( 1.0 ) ) / tau_r ) / ( ( ( ( - 1.0 ) ) ) / tau_r ) - __primary );
+    n += __primary;
+  } else {
+ n = n - n * p0 ;
+     }
+   if (nrn_netrec_state_adjust && !cvode_active_){
+    /* discon state adjustment for cnexp case (rate uses no local variable) */
+    double __state = tau_r;
+    double __primary = (tau_r - a_FDR * tau_r) - __state;
+     __primary += ( 1. - exp( 0.5*dt*( ( ( ( - 1.0 ) ) ) / tau_FDR ) ) )*( - ( ( ( tau_r0 ) ) / tau_FDR ) / ( ( ( ( - 1.0 ) ) ) / tau_FDR ) - __primary );
+    tau_r += __primary;
+  } else {
+ tau_r = tau_r - a_FDR * tau_r ;
+     }
+   if (nrn_netrec_state_adjust && !cvode_active_){
+    /* discon state adjustment for cnexp case (rate uses no local variable) */
+    double __state = D;
+    double __primary = (D - a_D * p0 * n * D) - __state;
+     __primary += ( 1. - exp( 0.5*dt*( ( ( ( - 1.0 ) ) ) / tau_D ) ) )*( - ( ( ( 1.0 ) ) / tau_D ) / ( ( ( ( - 1.0 ) ) ) / tau_D ) - __primary );
+    D += __primary;
+  } else {
+ D = D - a_D * p0 * n * D ;
+     }
+ } }
  
 static int _ode_count(int _type){ return 4;}
  
@@ -318,6 +363,10 @@ static void _ode_map(int _ieq, double** _pv, double** _pvdot, double* _pp, Datum
 	}
  }
  
+static void _ode_matsol_instance1(_threadargsproto_) {
+ _ode_matsol1 (_p, _ppvar, _thread, _nt);
+ }
+ 
 static void _ode_matsol(_NrnThread* _nt, _Memb_list* _ml, int _type) {
    double* _p; Datum* _ppvar; Datum* _thread;
    Node* _nd; double _v; int _iml, _cntml;
@@ -327,7 +376,7 @@ static void _ode_matsol(_NrnThread* _nt, _Memb_list* _ml, int _type) {
     _p = _ml->_data[_iml]; _ppvar = _ml->_pdata[_iml];
     _nd = _ml->_nodelist[_iml];
     v = NODEV(_nd);
- _ode_matsol1 (_p, _ppvar, _thread, _nt);
+ _ode_matsol_instance1(_threadargs_);
  }}
 
 static void initmodel(double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) {
@@ -368,7 +417,8 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
   }
  v = _v;
  initmodel(_p, _ppvar, _thread, _nt);
-}}
+}
+}
 
 static double _nrn_current(double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt, double _v){double _current=0.;v=_v;{ {
    i = g * ( v - e ) ;
@@ -412,7 +462,9 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 	NODERHS(_nd) -= _rhs;
   }
  
-}}
+}
+ 
+}
 
 static void nrn_jacob(_NrnThread* _nt, _Memb_list* _ml, int _type) {
 double* _p; Datum* _ppvar; Datum* _thread;
@@ -434,12 +486,13 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 	NODED(_nd) += _g;
   }
  
-}}
+}
+ 
+}
 
 static void nrn_state(_NrnThread* _nt, _Memb_list* _ml, int _type) {
- double _break, _save;
 double* _p; Datum* _ppvar; Datum* _thread;
-Node *_nd; double _v; int* _ni; int _iml, _cntml;
+Node *_nd; double _v = 0.0; int* _ni; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
@@ -457,16 +510,10 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
     _nd = _ml->_nodelist[_iml];
     _v = NODEV(_nd);
   }
- _break = t + .5*dt; _save = t;
  v=_v;
 {
- { {
- for (; t < _break; t += dt) {
-   state(_p, _ppvar, _thread, _nt);
-  
-}}
- t = _save;
- }}}
+ {   state(_p, _ppvar, _thread, _nt);
+  }}}
 
 }
 

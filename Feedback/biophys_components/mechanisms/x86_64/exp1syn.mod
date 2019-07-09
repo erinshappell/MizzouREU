@@ -1,1 +1,1 @@
-../modfiles//exp1syn.mod
+../exp1syn.mod

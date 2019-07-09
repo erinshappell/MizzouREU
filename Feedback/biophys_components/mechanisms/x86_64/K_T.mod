@@ -1,1 +1,1 @@
-../modfiles//K_T.mod
+../K_T.mod

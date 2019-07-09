@@ -1,1 +1,1 @@
-../modfiles//Nap.mod
+../Nap.mod

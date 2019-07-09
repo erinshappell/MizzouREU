@@ -1,30 +1,4 @@
-2019-07-08 14:34:30,489 [INFO] Created log file
-2019-07-08 14:34:30,659 [INFO] Building cells.
-2019-07-08 14:34:30,782 [INFO] Building recurrent connections
-2019-07-08 14:34:30,969 [INFO] Building virtual cell stimulations for blad_spikes_low
-2019-07-08 14:34:30,987 [INFO] Building virtual cell stimulations for EUS_spikes
-2019-07-08 14:34:31,009 [INFO] Building virtual cell stimulations for PAG_spikes
-2019-07-08 14:34:31,095 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
-2019-07-08 14:34:31,095 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
-2019-07-08 14:34:31,096 [INFO] Block save every 5000 steps
-2019-07-08 14:34:33,301 [INFO]     step:5000 t_sim:500.00 ms
-2019-07-08 14:34:35,472 [INFO]     step:10000 t_sim:1000.00 ms
-2019-07-08 14:34:37,667 [INFO]     step:15000 t_sim:1500.00 ms
-2019-07-08 14:34:39,883 [INFO]     step:20000 t_sim:2000.00 ms
-2019-07-08 14:34:42,091 [INFO]     step:25000 t_sim:2500.00 ms
-2019-07-08 14:34:44,316 [INFO]     step:30000 t_sim:3000.00 ms
-2019-07-08 14:34:46,507 [INFO]     step:35000 t_sim:3500.00 ms
-2019-07-08 14:34:48,698 [INFO]     step:40000 t_sim:4000.00 ms
-2019-07-08 14:34:50,913 [INFO]     step:45000 t_sim:4500.00 ms
-2019-07-08 14:34:53,189 [INFO]     step:50000 t_sim:5000.00 ms
-2019-07-08 14:34:55,596 [INFO]     step:55000 t_sim:5500.00 ms
-2019-07-08 14:34:57,839 [INFO]     step:60000 t_sim:6000.00 ms
-2019-07-08 14:35:00,294 [INFO]     step:65000 t_sim:6500.00 ms
-2019-07-08 14:35:02,656 [INFO]     step:70000 t_sim:7000.00 ms
-2019-07-08 14:35:04,908 [INFO]     step:75000 t_sim:7500.00 ms
-2019-07-08 14:35:07,107 [INFO]     step:80000 t_sim:8000.00 ms
-2019-07-08 14:35:09,419 [INFO]     step:85000 t_sim:8500.00 ms
-2019-07-08 14:35:11,691 [INFO]     step:90000 t_sim:9000.00 ms
-2019-07-08 14:35:14,103 [INFO]     step:95000 t_sim:9500.00 ms
-2019-07-08 14:35:16,504 [INFO]     step:100000 t_sim:10000.00 ms
-2019-07-08 14:35:18,121 [INFO] Simulation completed in 47.03 seconds 
+2019-07-09 13:11:51,894 [INFO] Created log file
+2019-07-09 13:11:52,005 [INFO] Building cells.
+2019-07-09 13:11:52,134 [INFO] Building recurrent connections
+2019-07-09 13:11:52,324 [INFO] Building virtual cell stimulations for blad_spikes_low

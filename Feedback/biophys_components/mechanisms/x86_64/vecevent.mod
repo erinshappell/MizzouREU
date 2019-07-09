@@ -1,1 +1,1 @@
-../modfiles//vecevent.mod
+../vecevent.mod

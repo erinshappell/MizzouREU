@@ -1,3 +1,3 @@
-node_type_id model_type level morphology model_template model_processing dynamics_params ei
-100 biophysical high Pvalb-IRES-Cre_Ai14_IVSCC_-176847.04.02.01_470522102_m.swc ctdb:Biophys1.hoc aibs_perisomatic 472912177_fit.json i
-101 biophysical low Nr5a1-Cre_Ai14_IVSCC_-169250.03.02.01_471087815_m.swc ctdb:Biophys1.hoc aibs_perisomatic 473863035_fit.json e
+node_type_id ei model_processing dynamics_params model_type level morphology model_template
+100 i aibs_perisomatic 472912177_fit.json biophysical high Pvalb-IRES-Cre_Ai14_IVSCC_-176847.04.02.01_470522102_m.swc ctdb:Biophys1.hoc
+101 e aibs_perisomatic 473863035_fit.json biophysical low Nr5a1-Cre_Ai14_IVSCC_-169250.03.02.01_471087815_m.swc ctdb:Biophys1.hoc

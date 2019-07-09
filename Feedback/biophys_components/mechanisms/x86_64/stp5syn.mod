@@ -1,1 +1,1 @@
-../modfiles//stp5syn.mod
+../stp5syn.mod

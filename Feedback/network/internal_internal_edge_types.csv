@@ -1,2 +1,2 @@
-edge_type_id target_query source_query target_sections model_template distance_range dynamics_params delay syn_weight
-100 level=='low' level=='high' ['somatic'] exp2syn "[0.0, 1e+20]" GABA_InhToExc.json 1.0 0.8
+edge_type_id target_query source_query dynamics_params delay syn_weight model_template distance_range target_sections
+100 level=='low' level=='high' GABA_InhToExc.json 1.0 0.8 exp2syn "[0.0, 1e+20]" ['somatic']

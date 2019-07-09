@@ -1,1 +1,1 @@
-../modfiles//stp2syn.mod
+../stp2syn.mod

@@ -1,5 +1,6 @@
 /* Created by Language version: 6.2.0 */
 /* NOT VECTORIZED */
+#define NRN_VECTORIZED 0
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,10 +22,19 @@ extern int _method3;
 extern double hoc_Exp(double);
 #endif
  
-#define _threadargscomma_ /**/
-#define _threadargs_ /**/
+#define nrn_init _nrn_init__VecStim
+#define _nrn_initial _nrn_initial__VecStim
+#define nrn_cur _nrn_cur__VecStim
+#define _nrn_current _nrn_current__VecStim
+#define nrn_jacob _nrn_jacob__VecStim
+#define nrn_state _nrn_state__VecStim
+#define _net_receive _net_receive__VecStim 
+#define element element__VecStim 
+#define play play__VecStim 
  
+#define _threadargscomma_ /**/
 #define _threadargsprotocomma_ /**/
+#define _threadargs_ /**/
 #define _threadargsproto_ /**/
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
@@ -159,7 +169,7 @@ static void nrn_alloc(Prop* _prop) {
 #define _tqitem &(_ppvar[2]._pvoid)
  static void _net_receive(Point_process*, double*, double);
  extern Symbol* hoc_lookup(const char*);
-extern void _nrn_thread_reg(int, int, void(*f)(Datum*));
+extern void _nrn_thread_reg(int, int, void(*)(Datum*));
 extern void _nrn_thread_table_reg(int, void(*)(double*, Datum*, Datum*, _NrnThread*, int));
 extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
 extern void _cvode_abstol( Symbol**, double*, int);
@@ -174,12 +184,15 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
   hoc_register_prop_size(_mechtype, 4, 3);
+  hoc_register_dparam_semantics(_mechtype, 0, "area");
+  hoc_register_dparam_semantics(_mechtype, 1, "pntproc");
+  hoc_register_dparam_semantics(_mechtype, 2, "netsend");
  add_nrn_artcell(_mechtype, 2);
  add_nrn_has_net_event(_mechtype);
  pnt_receive[_mechtype] = _net_receive;
  pnt_receive_size[_mechtype] = 1;
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 VecStim /local1/workspace/scratch/feedback_loop/biophys_components/mechanisms/x86_64/vecevent.mod\n");
+ 	ivoc_help("help ?1 VecStim /home/mizzou/MizzouREU/Feedback/biophys_components/mechanisms/modfiles/x86_64/vecevent.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
@@ -294,8 +307,7 @@ static double _nrn_current(double _v){double _current=0.;v=_v;{
 }
 
 static void nrn_state(_NrnThread* _nt, _Memb_list* _ml, int _type){
- double _break, _save;
-Node *_nd; double _v; int* _ni; int _iml, _cntml;
+Node *_nd; double _v = 0.0; int* _ni; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
@@ -303,7 +315,6 @@ _cntml = _ml->_nodecount;
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _p = _ml->_data[_iml]; _ppvar = _ml->_pdata[_iml];
  _nd = _ml->_nodelist[_iml];
- _break = t + .5*dt; _save = t;
  v=_v;
 {
 }}
