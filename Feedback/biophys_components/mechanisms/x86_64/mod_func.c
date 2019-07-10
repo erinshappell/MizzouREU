@@ -6,7 +6,6 @@ extern int nrn_nobanner_;
 extern void _CaDynamics_reg(void);
 extern void _Ca_HVA_reg(void);
 extern void _Ca_LVA_reg(void);
-extern void _exp1isyn_reg(void);
 extern void _exp1syn_reg(void);
 extern void _Ih_reg(void);
 extern void _Im_reg(void);
@@ -36,7 +35,6 @@ void modl_reg(){
     fprintf(stderr," CaDynamics.mod");
     fprintf(stderr," Ca_HVA.mod");
     fprintf(stderr," Ca_LVA.mod");
-    fprintf(stderr," exp1isyn.mod");
     fprintf(stderr," exp1syn.mod");
     fprintf(stderr," Ih.mod");
     fprintf(stderr," Im.mod");
@@ -63,7 +61,6 @@ void modl_reg(){
   _CaDynamics_reg();
   _Ca_HVA_reg();
   _Ca_LVA_reg();
-  _exp1isyn_reg();
   _exp1syn_reg();
   _Ih_reg();
   _Im_reg();

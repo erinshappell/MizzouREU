@@ -10,8 +10,14 @@ import matplotlib.pyplot as plt
 from neuron import h
 
 
-firing_rate_threshold = 5.5
+firing_rate_threshold = 5.0
 
+# Create lists for firing rates, bladder volumes, and bladder pressures
+times = []
+pgn_frs = []
+b_vols = []
+b_pres = []
+b_aff_frs = []
 
 class FeedbackLoop(SimulatorMod):
     def __init__(self):
@@ -41,16 +47,16 @@ class FeedbackLoop(SimulatorMod):
 
         # This is where you can use the firing-rate of the low-level neurons to generate a set of spike times for the
         # next block. For this case I'm just setting the high-level neuron to start bursting
-        if firing_rate > firing_rate_threshold:
-            self._spike_events = np.linspace(next_block_tstart, next_block_tstop, 500)
-            #psg = PoissonSpikeGenerator()
-            #psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
-            #self._spike_events = psg.get_times(0)
+        #if firing_rate > firing_rate_threshold:
+            #self._spike_events = np.linspace(next_block_tstart, next_block_tstop, 500)
+        psg = PoissonSpikeGenerator()
+        psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
+        self._spike_events = psg.get_times(0)
 
-            for gid in self._high_level_neurons:
-                nc = self._netcons[gid]
-                for t in self._spike_events:
-                    nc.event(t)
+        for gid in self._high_level_neurons:
+            nc = self._netcons[gid]
+            for t in self._spike_events:
+                nc.event(t)
 
     def initialize(self, sim):
         # Attach a NetCon/synapse on the high-level neuron(s) soma. We can use the NetCon.event(time) method to send
@@ -64,13 +70,13 @@ class FeedbackLoop(SimulatorMod):
 
             # Create synapse
             # These values will determine how the high-level neuron behaves with the input
-            new_syn = h.Exp2Syn(0.5, cell.hobj.soma[0])
+            new_syn = h.Exp2Syn(0.7, cell.hobj.soma[0])
             new_syn.e = 0.0
             new_syn.tau1 = 1.0
             new_syn.tau2 = 3.0
 
             nc = h.NetCon(vec_stim, new_syn)
-            nc.weight[0] = 0.001
+            nc.weight[0] = 0.012
             nc.delay = 1.0
 
             self._synapses[gid] = new_syn
@@ -97,7 +103,7 @@ class FeedbackLoop(SimulatorMod):
         """
 
         # Calculate the avg number of spikes per neuron
-        block_length = sim.nsteps_block*sim.dt/1000.0  #  time lenght of previous block of simulation TODO: precalcualte
+        block_length = sim.nsteps_block*sim.dt/1000.0  #  time length of previous block of simulation TODO: precalcualte
         n_gids = 0
         n_spikes = 0
         for gid, tvec in self._spike_records.items():
@@ -111,15 +117,98 @@ class FeedbackLoop(SimulatorMod):
         #if fr > firing_rate_threshold:
         #    self._activate_hln(sim, block_interval, fr)
 
-        # set the activity of high-level neuron
-        self._activate_hln(sim, block_interval, fr)
+        # Grill function for polynomial fit according to PGN firing rate
+	    # Grill, et al. 2016
+        def pgn_fire_rate(x):
+            f = 2.0E-03*x**3 - 3.3E-02*x**2 + 1.8*x - 0.5
+            
+            # Take absolute value of firing rate if negative
+            if f < 0:
+                f *= -1
+
+            if f > 15.0:
+                f = 15.0
+
+            return f
+
+        # Grill function for polynomial fit according to bladder volume
+	    # Grill, et al. 2016
+        def blad_vol(vol):
+            f = 1.5*vol - 10
+
+            return f
+
+        # Grill function returning pressure in units of cm H20
+	    # Grill, et al. 2016
+        def pressure(fr,v):
+            p = fr + v
+
+            # Round negative pressure up to 0
+            if p < 0:
+                p = 0
+
+            return p
+
+        # Grill function returning bladder afferent firing rate in units of Hz
+	    # Grill, et al. 2016
+        def blad_aff_fr(p):
+            fr = -3.0E-08*p**5 + 1.0E-5*p**4 - 1.5E-03*p**3 + 7.9E-02*p**2 - 0.6*p
+			
+            # Take absolute value of negative firing rates
+            if fr < 0:
+                fr *= -1 
+
+            return fr 
+
+        # Calculate bladder volume using Grill's polynomial fit equation
+        v_init = 0.05       # TODO: get biological value for initial bladder volume
+        fill = 0.05 	 	# ml/min (Asselt et al. 2017)
+        fill /= (1000 * 60) # Scale from ml/min to ml/ms
+        void = 4.6 	 		# ml/min (Streng et al. 2002)
+        void /= (1000 * 60) # Scale from ml/min to ml/ms
+        max_v = 0.76 		# ml (Grill et al. 2019)
+
+        # Update blad aff firing rate
+        if len(tvec) > 0:
+            
+            PGN_fr = pgn_fire_rate(fr)
+            vol = fill*tvec[0]*100 + v_init
+
+            # Maintain maximum volume
+            if vol > max_v:
+                vol = max_v
+            grill_vol = blad_vol(vol)
+
+            # Calculate pressure using Grill equation
+            #p = pressure(PGN_fr, grill_vol)
+            p = pressure(PGN_fr, vol)
+
+            # Calculate bladder afferent firing rate using Grill equation
+            bladaff_fr = blad_aff_fr(p)
+
+            print('PGN firing rate = %.2f Hz' %fr)
+            print('Volume = %.2f ml' %vol)
+            print('Pressure = %.2f cm H20' %p)
+            print('Bladder afferent firing rate = %.2f Hz' %bladaff_fr)
+
+            # Save values in appropriate lists
+            times.append(tvec[0])
+            pgn_frs.append(fr)
+            b_vols.append(vol)
+            b_pres.append(p)
+            b_aff_frs.append(bladaff_fr)
+
+            # Set the activity of high-level neuron
+            self._activate_hln(sim, block_interval, bladaff_fr)
+
+        else:
+            self._activate_hln(sim, block_interval, fr) 
 
         # NEURON requires resetting NetCon.record() every time we read the tvec.
         self._set_spike_detector(sim)
 
     def finalize(self, sim):
         pass
-
 
 def run(config_file):
     conf = bionet.Config.from_json(config_file, validate=True)
@@ -132,7 +221,7 @@ def run(config_file):
     sim.add_mod(fbmod)  # Attach the above module to the simulator.
     sim.run()
 
-    # Plotting
+    # Plotting firing rates
     spike_trains = SpikeTrains.from_sonata('output/spikes.h5')
     for gid in [0, 1]:
         spikes = np.zeros(sim.n_steps, dtype=np.int)
@@ -142,13 +231,49 @@ def run(config_file):
         window = np.zeros(window_size)
         window[0:window_size] = 1
         plt.plot(np.convolve(spikes, window), label=gid)
+    plt.xlabel('Sample')
+    plt.ylabel('Firing Rate [Hz]')
     plt.legend()
+
+    # Plotting bladder volume and bladder pressure
+    fig1, ax1_1 = plt.subplots()
+
+    color = 'tab:red'
+    ax1_1.set_xlabel('Time (t) [ms]')
+    ax1_1.set_ylabel('Bladder Volume (V) [ml]', color=color)
+    ax1_1.plot(times, b_vols, color=color)
+    ax1_1.tick_params(axis='y', labelcolor=color)
+
+    ax2_1 = ax1_1.twinx()  # instantiate a second axes that shares the same x-axis
+
+    color = 'tab:blue'
+    ax2_1.set_ylabel('Bladder Pressure (P) [cm H20]', color=color)  # we already handled the x-label with ax1
+    ax2_1.plot(times, b_pres, color=color)
+    ax2_1.tick_params(axis='y', labelcolor=color)
+
+    fig1.tight_layout()  # otherwise the right y-label is slightly clipped
+
+    # Plotting PGN firing rate and bladder afferent firing rate
+    fig2, ax1_2 = plt.subplots()
+
+    color = 'tab:green'
+    ax1_2.set_xlabel('Time (t) [ms]')
+    ax1_2.set_ylabel('PGN Firing Rate [Hz]', color=color)
+    ax1_2.plot(times, pgn_frs, color=color)
+    ax1_2.tick_params(axis='y', labelcolor=color)
+
+    ax2_2 = ax1_2.twinx()  # instantiate a second axes that shares the same x-axis
+
+    color = 'tab:orange'
+    ax2_2.set_ylabel('Bladder Afferent Firing Rate [Hz]', color=color)  # we already handled the x-label with ax1
+    ax2_2.plot(times, b_aff_frs, color=color)
+    ax2_2.tick_params(axis='y', labelcolor=color)
+
+    fig2.tight_layout()  # otherwise the right y-label is slightly clipped
+
     plt.show()
 
     bionet.nrn.quit_execution()
-
-
-
 
 if __name__ == '__main__':
     if __file__ != sys.argv[-1]:

@@ -1,28 +1,28 @@
-2019-07-09 11:31:40,846 [INFO] Created log file
-2019-07-09 11:31:40,917 [INFO] Building cells.
-2019-07-09 11:31:41,041 [INFO] Building recurrent connections
-2019-07-09 11:31:41,044 [INFO] Building virtual cell stimulations for external_spikes
-2019-07-09 11:31:41,065 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
-2019-07-09 11:31:41,065 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
-2019-07-09 11:31:41,066 [INFO] Block save every 5000 steps
-2019-07-09 11:31:41,143 [INFO]     step:5000 t_sim:500.00 ms
-2019-07-09 11:31:41,212 [INFO]     step:10000 t_sim:1000.00 ms
-2019-07-09 11:31:41,292 [INFO]     step:15000 t_sim:1500.00 ms
-2019-07-09 11:31:41,368 [INFO]     step:20000 t_sim:2000.00 ms
-2019-07-09 11:31:41,442 [INFO]     step:25000 t_sim:2500.00 ms
-2019-07-09 11:31:41,525 [INFO]     step:30000 t_sim:3000.00 ms
-2019-07-09 11:31:41,606 [INFO]     step:35000 t_sim:3500.00 ms
-2019-07-09 11:31:41,680 [INFO]     step:40000 t_sim:4000.00 ms
-2019-07-09 11:31:41,761 [INFO]     step:45000 t_sim:4500.00 ms
-2019-07-09 11:31:41,842 [INFO]     step:50000 t_sim:5000.00 ms
-2019-07-09 11:31:41,916 [INFO]     step:55000 t_sim:5500.00 ms
-2019-07-09 11:31:41,995 [INFO]     step:60000 t_sim:6000.00 ms
-2019-07-09 11:31:42,075 [INFO]     step:65000 t_sim:6500.00 ms
-2019-07-09 11:31:42,147 [INFO]     step:70000 t_sim:7000.00 ms
-2019-07-09 11:31:42,230 [INFO]     step:75000 t_sim:7500.00 ms
-2019-07-09 11:31:42,310 [INFO]     step:80000 t_sim:8000.00 ms
-2019-07-09 11:31:42,383 [INFO]     step:85000 t_sim:8500.00 ms
-2019-07-09 11:31:42,463 [INFO]     step:90000 t_sim:9000.00 ms
-2019-07-09 11:31:42,541 [INFO]     step:95000 t_sim:9500.00 ms
-2019-07-09 11:31:42,614 [INFO]     step:100000 t_sim:10000.00 ms
-2019-07-09 11:31:42,692 [INFO] Simulation completed in 1.626 seconds 
+2019-07-10 15:13:23,535 [INFO] Created log file
+2019-07-10 15:13:23,600 [INFO] Building cells.
+2019-07-10 15:13:23,717 [INFO] Building recurrent connections
+2019-07-10 15:13:23,720 [INFO] Building virtual cell stimulations for external_spikes
+2019-07-10 15:13:23,733 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-07-10 15:13:23,733 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-07-10 15:13:23,733 [INFO] Block save every 5000 steps
+2019-07-10 15:13:23,811 [INFO]     step:5000 t_sim:500.00 ms
+2019-07-10 15:13:23,885 [INFO]     step:10000 t_sim:1000.00 ms
+2019-07-10 15:13:23,961 [INFO]     step:15000 t_sim:1500.00 ms
+2019-07-10 15:13:24,035 [INFO]     step:20000 t_sim:2000.00 ms
+2019-07-10 15:13:24,109 [INFO]     step:25000 t_sim:2500.00 ms
+2019-07-10 15:13:24,191 [INFO]     step:30000 t_sim:3000.00 ms
+2019-07-10 15:13:24,276 [INFO]     step:35000 t_sim:3500.00 ms
+2019-07-10 15:13:24,352 [INFO]     step:40000 t_sim:4000.00 ms
+2019-07-10 15:13:24,428 [INFO]     step:45000 t_sim:4500.00 ms
+2019-07-10 15:13:24,515 [INFO]     step:50000 t_sim:5000.00 ms
+2019-07-10 15:13:24,600 [INFO]     step:55000 t_sim:5500.00 ms
+2019-07-10 15:13:24,683 [INFO]     step:60000 t_sim:6000.00 ms
+2019-07-10 15:13:24,756 [INFO]     step:65000 t_sim:6500.00 ms
+2019-07-10 15:13:24,840 [INFO]     step:70000 t_sim:7000.00 ms
+2019-07-10 15:13:24,913 [INFO]     step:75000 t_sim:7500.00 ms
+2019-07-10 15:13:24,987 [INFO]     step:80000 t_sim:8000.00 ms
+2019-07-10 15:13:25,070 [INFO]     step:85000 t_sim:8500.00 ms
+2019-07-10 15:13:25,149 [INFO]     step:90000 t_sim:9000.00 ms
+2019-07-10 15:13:25,228 [INFO]     step:95000 t_sim:9500.00 ms
+2019-07-10 15:13:25,299 [INFO]     step:100000 t_sim:10000.00 ms
+2019-07-10 15:13:25,337 [INFO] Simulation completed in 1.604 seconds 
