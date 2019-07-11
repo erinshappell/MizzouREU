@@ -53,9 +53,9 @@
   }
   },
  "node_sets":{
-	"inp_nodes":{
-		"model_type": "virtual"
-	}
+	"inp_nodes": {"model_type": "virtual"},
+	"low_level_neurons": {"level": "low"},
+    	"high_level_neurons": {"level": "high"}
  },	
   "network": "./circuit_config.json"
 }

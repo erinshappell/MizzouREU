@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from neuron import h
 
 
-firing_rate_threshold = 5.0
+#firing_rate_threshold = 5.0
 
 # Create lists for firing rates, bladder volumes, and bladder pressures
 times = []
@@ -170,14 +170,24 @@ class FeedbackLoop(SimulatorMod):
 
         # Update blad aff firing rate
         if len(tvec) > 0:
-            
             PGN_fr = pgn_fire_rate(fr)
-            vol = fill*tvec[0]*100 + v_init
+
+            # Filling: 0 - 7000 ms
+            if tvec[0] < 7000:
+                vol = fill*tvec[0]*150 + v_init
+
+            # Voiding: 7000 - 10,000 ms
+            else:
+                vol = max_v - void*(10000-tvec[0])*100
 
             # Maintain maximum volume
             if vol > max_v:
                 vol = max_v
-            grill_vol = blad_vol(vol)
+
+            # Maintain minimum volume
+            if vol < v_init:
+                vol = v_init
+            #grill_vol = blad_vol(vol)
 
             # Calculate pressure using Grill equation
             #p = pressure(PGN_fr, grill_vol)
