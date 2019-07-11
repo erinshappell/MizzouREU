@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 from bmtk.utils.cell_vars import CellVarsFile
 import numpy as np
 from bmtk.analyzer.cell_vars import _get_cell_report
-#plot_report(config_file="simulation_config.json")
-import pdb
-
 
 numBladaff = 10
 numEUSaff = 10
@@ -27,14 +24,10 @@ config_file = "simulation_config.json"
 report_name = None
 report_name, report_file = _get_cell_report(config_file, report_name)
 
-#plot_report(config_file=config_file,report_file=report_file)
-
 var_report = CellVarsFile(report_file)
 time_steps = var_report.time_trace
 
-
-# Plot spike raster
-
+# Plot spike raster ---------------------------------------
 Blad_gids = np.arange(0,numBladaff)
 EUS_gids = Blad_gids + numBladaff
 PAG_gids = EUS_gids + numEUSaff
@@ -52,8 +45,6 @@ Bladmn_gids = EUSmn_gids + numEUSmn
 df = pd.read_csv("output/spikes.csv",delimiter=' ')
 rast = df.values
 
-#plt.plot(rast[:,0],rast[:,1],'k.')
-
 # Plot Bladder afferent, EUS afferent, PAG afferent, IND, and Hypo on one figure
 plt.figure()
 Bladspkt = rast[np.in1d(rast[:,1],Blad_gids),:]
@@ -69,7 +60,7 @@ plt.xlabel('Time (t) [ms]')
 plt.title('Afferent Firing Times')
 plt.legend()
 
-# Plot INM+, INM-, IND, FB
+# Plot INM+, INM-, IND, FB --------------------------------
 plt.figure()
 INMpspkt = rast[np.in1d(rast[:,1],INmplus_gids),:]
 plt.plot(INMpspkt[:,0],INMpspkt[:,1]-40,'b.',label='INm+')
@@ -87,7 +78,7 @@ plt.xlabel('Time (t) [ms]')
 plt.title('Interneuron Firing Times')
 plt.legend()
 
-# Plot SPN(PGN), Hypo, MPG, IMG
+# Plot SPN(PGN), Hypo, MPG, IMG ---------------------------
 plt.figure()
 PGNspkt = rast[np.in1d(rast[:,1],PGN_gids),:]
 plt.plot(PGNspkt[:,0],PGNspkt[:,1]-50,'b.',label='PGN')
@@ -105,7 +96,7 @@ plt.xlabel('Time (t) [ms]')
 plt.title('Ganglion/Preganglionic Firing Times')
 plt.legend()
 
-# Motor neurons
+# Motor neurons -------------------------------------------
 plt.figure()
 EUSmnspkt = rast[np.in1d(rast[:,1],EUSmn_gids),:]
 plt.plot(EUSmnspkt[:,0],EUSmnspkt[:,1],'r.',label='EUS MN')
@@ -117,58 +108,4 @@ plt.xlabel('Time (t) [ms]')
 plt.title('Motor Neuron Firing Times')
 plt.legend()
 
-# Plot averaged frequency data for PGN
-#plt.figure()
-#plt.hist(PGNspkt[:,0],10)
-
-#############################################
-############ Save PGN spike data ############
-#############################################
-
-PGN_x = PGNspkt[:,0]
-PGN_y = PGNspkt[:,1]
-tf = []
-
-for n in range(len(PGN_y)):
-    if PGN_y[n] == 71:
-        tf.append(True)
-    else:
-        tf.append(False)
-
-PGN_data = PGN_x[tf]
-freqs = []
-
-### Code for getting averaged spiking over periods of 1000 ms (1 s)
-# low = 0
-# high = 1000
-# for i in np.arange(0,10):
-#     current_data = []
-#     for n in range(len(PGN_data)):
-#         if PGN_data[n] >= low and PGN_data[n] <= high:
-#             current_data.append(PGN_data[n])
-
-#     freq = len(current_data)
-#     for j in np.arange(0,100):
-#         freqs.append(int(freq))
-        
-#     low += 1000
-#     high += 1000
-
-### Code for getting instantaneous spiking ###
-
-low = 0 
-
-for i in range(len(PGN_data)):
-    high = PGN_data[i]
-
-    f = int(1/(high - low)*1000)
-
-    for n in np.arange(low,high):
-        freqs.append(f)
-
-    low = high
-
-np.savetxt('PGN_freqs.csv', freqs, delimiter=',')
-
 plt.show()
-#raster_plot(cells_file="network/inputPUD_hco_net_edges.h5", cell_models_file="network/inputPUD_hco_net_edge_types.csv", spikes_file="output/spikes.h5")

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-"""Simulates an example network of 14 cell receiving two kinds of exernal input as defined in configuration file"""
-
 import os, sys
 from bmtk.simulator import bionet
 from bmtk.simulator.bionet.default_setters.cell_models import loadHOC
@@ -25,6 +21,8 @@ b_aff_frs = []
 
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
+# Huge thank you to Kael Dai, Allen Institute 2019 for the template code
+# we used to create the feedback loop below
 class FeedbackLoop(SimulatorMod):
     def __init__(self):
         self._synapses = {}
@@ -49,12 +47,9 @@ class FeedbackLoop(SimulatorMod):
     def _activate_hln(self, sim, block_interval, firing_rate):
         next_block_tstart = (block_interval[1] + 1) * sim.dt  # The next time-step
         next_block_tstop = next_block_tstart + sim.nsteps_block*sim.dt  # The time-step when the next block ends
-        # TODO: See if we've reached the end of the simulation
 
         # This is where you can use the firing-rate of the low-level neurons to generate a set of spike times for the
-        # next block. For this case I'm just setting the high-level neuron to start bursting
-        #if firing_rate > firing_rate_threshold:
-            #self._spike_events = np.linspace(next_block_tstart, next_block_tstop, 500)
+        # next block
         psg = PoissonSpikeGenerator()
         psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
         self._spike_events = psg.get_times(0)
@@ -118,11 +113,9 @@ class FeedbackLoop(SimulatorMod):
 
         avg_spikes = n_spikes/float(n_gids)
 
-        # calculate the firing rate the the low-level neuron(s)
+        # Calculate the firing rate the the low-level neuron(s)
         fr = avg_spikes/float(block_length)
-        #if fr > firing_rate_threshold:
-        #    self._activate_hln(sim, block_interval, fr)
-
+    
         # Grill function for polynomial fit according to PGN firing rate
 	    # Grill, et al. 2016
         def pgn_fire_rate(x):
@@ -164,7 +157,7 @@ class FeedbackLoop(SimulatorMod):
             if fr < 0:
                 fr *= -1 
 
-            return fr 
+            return 2*fr # Using scaling factor of 2 here to get the correct firing rate range 
 
         # Calculate bladder volume using Grill's polynomial fit equation
         v_init = 0.05       # TODO: get biological value for initial bladder volume
@@ -193,11 +186,10 @@ class FeedbackLoop(SimulatorMod):
             # Maintain minimum volume
             if vol < v_init:
                 vol = v_init
-            #grill_vol = blad_vol(vol)
+            grill_vol = blad_vol(vol)
 
             # Calculate pressure using Grill equation
-            #p = pressure(PGN_fr, grill_vol)
-            p = pressure(PGN_fr, vol)
+            p = pressure(PGN_fr, grill_vol)
 
             # Calculate bladder afferent firing rate using Grill equation
             bladaff_fr = blad_aff_fr(p)
@@ -289,17 +281,10 @@ def run(config_file):
 
     plt.show()
 
+    # Save PGN firing rate data ---------------------------
+    np.savetxt('PGN_freqs.csv', pgn_frs, delimiter=',')
+
     bionet.nrn.quit_execution()
-
-# def run(config_file):
-#     conf = bionet.Config.from_json(config_file, validate=True)
-#     conf.build_env()
-
-#     graph = bionet.BioNetwork.from_config(conf)
-#     sim = bionet.BioSimulator.from_config(conf, network=graph)
-#     sim.run()
-#     bionet.nrn.quit_execution()
-
 
 if __name__ == '__main__':
     if __file__ != sys.argv[-1]:

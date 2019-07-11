@@ -1,11 +1,8 @@
 import numpy as np
-
 from bmtk.builder.networks import NetworkBuilder
 from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
 
-
 output_dir='network'
-
 
 #######################################################################
 ##################### Create the cells ################################
@@ -15,7 +12,7 @@ print("\nCreating Cells")
 # Build the main network
 net = NetworkBuilder('LUT')
 
-# Specify number of cells in each population
+# Specify number of cells in each population --------------
 numBladaff = 10
 numEUSaff = 10
 numPAGaff = 10
@@ -30,7 +27,7 @@ numMPG = 10
 numEUSmn = 10
 numBladmn = 10
 
-# Create the nodes
+# Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numEUSaff, pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numPAGaff, pop_name='PAGaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
@@ -44,7 +41,6 @@ net.add_nodes(N=numIMG, pop_name='IMG',model_type='biophysical',model_template='
 net.add_nodes(N=numMPG, pop_name='MPG',model_type='biophysical',model_template='hoc:MPG',morphology='blank.swc')
 net.add_nodes(N=numEUSmn, pop_name='EUSmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numBladmn, pop_name='Bladmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-
 
 ##################################################################################
 ####################### Connect the cells ########################################
@@ -117,7 +113,7 @@ def one_to_one(source, target):
 
     return tmp_nsyn
 
-# Add connections 
+# Add connections -----------------------------------------
 # Blad afferent --> INd (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
@@ -131,7 +127,7 @@ net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='I
 # EUS afferent --> INd (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
-                   syn_weight=10.0e-03, # changed from 12 to 10 (EES)
+                   syn_weight=10.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -274,7 +270,7 @@ net.add_edges(source=net.nodes(pop_name='FB'), target=net.nodes(pop_name='IND'),
 # MPG --> Bladder MN (Beckel et al. 2015)
 net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladmn'),
                    connection_rule=one_to_one,
-                   syn_weight=16.0e-03, # changed from 12 to 16 (EES)
+                   syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -379,23 +375,4 @@ EUS_aff_virt.save_edges(output_dir=output_dir)
 PAG_aff_virt.save_nodes(output_dir=output_dir)
 PAG_aff_virt.save_edges(output_dir=output_dir)
 
-###################################################################################
-#################### Create input spike trains ####################################
-###################################################################################
-
-#from bmtk.utils.spike_trains import SpikesGenerator
-
-#sg = SpikesGenerator(nodes='network/EUS_aff_virt_nodes.h5', t_max=10.0)
-#sg.set_rate(30.0)
-#sg.save_csv('EUS_spikes.csv', in_ms=True)
-
-#sg = SpikesGenerator(nodes='network/Blad_aff_virt_nodes.h5', t_max=10.0)
-#sg.set_variable_rate(5.0,t_start=0,t_end=3)
-#sg.save_csv('Blad_spikes_low.csv', in_ms=True)
-
-#sg = SpikesGenerator(nodes='network/PAG_aff_virt_nodes.h5', t_max=10.0)
-#sg.set_rate(1.0)
-#sg.save_csv('PAG_spikes.csv', in_ms=True)
 print("Done")
-
-
