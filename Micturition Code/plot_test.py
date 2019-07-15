@@ -6,19 +6,19 @@ from bmtk.utils.cell_vars import CellVarsFile
 import numpy as np
 from bmtk.analyzer.cell_vars import _get_cell_report
 
-numBladaff = 10
-numEUSaff = 10
-numPAGaff = 10
-numIND = 10
-numHypo = 10
-numINmplus = 10
+numBladaff  = 10
+numEUSaff   = 10
+numPAGaff   = 10
+numIND      = 10
+numHypo     = 10
+numINmplus  = 10
 numINmminus = 10
-numPGN = 10
-numFB = 10
-numIMG = 10
-numMPG = 10
-numEUSmn = 10
-numBladmn = 10
+numPGN      = 10
+numFB       = 10
+numIMG      = 10
+numMPG      = 10
+numEUSmn    = 10
+numBladmn   = 10
 
 config_file = "simulation_config.json"
 report_name = None

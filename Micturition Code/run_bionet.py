@@ -7,6 +7,7 @@ from bmtk.utils.reports.spike_trains import PoissonSpikeGenerator
 import numpy as np
 import matplotlib.pyplot as plt
 from neuron import h
+import statistics as stat
 
 # Import the synaptic depression/facilitation model
 import synapses
@@ -100,7 +101,8 @@ class FeedbackLoop(SimulatorMod):
     def block(self, sim, block_interval):
         """This function is called every n steps during the simulation, as set in the config.json file (run/nsteps_block).
 
-        We can use this to get the firing rate of neuron 1 during the last block and use it to calculate
+        We can use this to get the firing rate of PGN during the last block and use it to calculate
+        firing rate for bladder afferent neuron
         """
 
         # Calculate the avg number of spikes per neuron
@@ -157,7 +159,7 @@ class FeedbackLoop(SimulatorMod):
             if fr < 0:
                 fr *= -1 
 
-            return 2*fr # Using scaling factor of 2 here to get the correct firing rate range 
+            return 5*fr # Using scaling factor of 5 here to get the correct firing rate range 
 
         # Calculate bladder volume using Grill's polynomial fit equation
         v_init = 0.05       # TODO: get biological value for initial bladder volume
@@ -262,6 +264,16 @@ def run(config_file):
     fig1.tight_layout()  # otherwise the right y-label is slightly clipped
 
     # Plotting PGN firing rate and bladder afferent firing rate
+    avg_pgn = stat.mean(pgn_frs)
+    stdev_pgn = stat.stdev(pgn_frs)
+    print('Average PGN firing rate is %.2f' %avg_pgn)
+    print('Standard deviation of PGN firing rate is %.2f' %stdev_pgn)
+
+    avg_ba = stat.mean(b_aff_frs)
+    stdev_ba = stat.stdev(b_aff_frs)
+    print('Average bladder afferent firing rate is %.2f' %avg_ba)
+    print('Standard deviation of bladder afferent firing rate is %.2f' %stdev_ba)
+
     fig2, ax1_2 = plt.subplots()
 
     color = 'tab:green'
@@ -279,10 +291,19 @@ def run(config_file):
 
     fig2.tight_layout()  # otherwise the right y-label is slightly clipped
 
-    plt.show()
+    plt.figure()
+    plt.xlabel('Time (t) [s]')
+    plt.ylabel('PGN Firing Rate (FR) [Hz]')
+    plt.errorbar(times, pgn_frs, stdev_ba, marker='^', color='green')
+    plt.plot(times, np.full(len(times), avg_pgn), '-k')
 
-    # Save PGN firing rate data ---------------------------
-    np.savetxt('PGN_freqs.csv', pgn_frs, delimiter=',')
+    plt.figure()
+    plt.xlabel('Time (t) [s]')
+    plt.ylabel('Bladder Afferent Firing Rate (FR) [Hz]')
+    plt.errorbar(times, b_aff_frs, stdev_ba, marker='^', color='orange')
+    plt.plot(times, np.full(len(times), avg_ba), '-k')
+
+    plt.show()
 
     bionet.nrn.quit_execution()
 

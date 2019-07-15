@@ -13,19 +13,19 @@ print("\nCreating Cells")
 net = NetworkBuilder('LUT')
 
 # Specify number of cells in each population --------------
-numBladaff = 10
-numEUSaff = 10
-numPAGaff = 10
-numIND = 10
-numHypo = 10
-numINmplus = 10
+numBladaff  = 10
+numEUSaff   = 10
+numPAGaff   = 10
+numIND      = 10
+numHypo     = 10
+numINmplus  = 10
 numINmminus = 10
-numPGN = 10
-numFB = 10
-numIMG = 10
-numMPG = 10
-numEUSmn = 10
-numBladmn = 10
+numPGN      = 10
+numFB       = 10
+numIMG      = 10
+numMPG      = 10
+numEUSmn    = 10
+numBladmn   = 10
 
 # Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
@@ -184,17 +184,6 @@ net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IN
                    distance_range=[0.0, 300.0],
                    dynamics_params='stsp.json', 
                    model_template='Exp2Syn1_STSP')
-
-## Original synapse ##
-# EUS afferent --> INm+ (Grill et al. 2016)
-# net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
-#                    connection_rule=one_to_one,
-#                    syn_weight=12.0e-03, 
-#                    target_sections=['somatic'],
-#                    delay=2.0,
-#                    distance_range=[0.0, 300.0],
-#                    dynamics_params='GABA_InhToInh.json', 
-#                    model_template='Exp2Syn')
 
 # PAG afferent --> INm+ (Source?)
 # Using this connection instead of synaptic depression for low pass filtering

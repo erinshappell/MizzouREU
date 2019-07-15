@@ -175,7 +175,7 @@ if __name__ == '__main__':
 	start    = 0 	 #ms
 	mid 	 = 6000	 #ms
 	duration = 10000 #ms
-	cells = [0,1,2,3,4,5,6,7,8,9]
+	cells = np.arange(0,250)
 
 	# Create bladder afferent input spikes ----------------
 

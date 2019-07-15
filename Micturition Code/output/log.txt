@@ -1,30 +1,110 @@
-2019-07-11 14:32:36,165 [INFO] Created log file
-2019-07-11 14:32:36,353 [INFO] Building cells.
-2019-07-11 14:32:36,498 [INFO] Building recurrent connections
-2019-07-11 14:32:36,705 [INFO] Building virtual cell stimulations for blad_spikes_low
-2019-07-11 14:32:36,730 [INFO] Building virtual cell stimulations for EUS_spikes
-2019-07-11 14:32:36,756 [INFO] Building virtual cell stimulations for PAG_spikes
-2019-07-11 14:32:36,955 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
-2019-07-11 14:32:36,956 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
-2019-07-11 14:32:36,956 [INFO] Block save every 5000 steps
-2019-07-11 14:32:39,473 [INFO]     step:5000 t_sim:500.00 ms
-2019-07-11 14:32:42,143 [INFO]     step:10000 t_sim:1000.00 ms
-2019-07-11 14:32:45,181 [INFO]     step:15000 t_sim:1500.00 ms
-2019-07-11 14:32:48,605 [INFO]     step:20000 t_sim:2000.00 ms
-2019-07-11 14:32:51,202 [INFO]     step:25000 t_sim:2500.00 ms
-2019-07-11 14:32:53,890 [INFO]     step:30000 t_sim:3000.00 ms
-2019-07-11 14:32:56,309 [INFO]     step:35000 t_sim:3500.00 ms
-2019-07-11 14:32:58,607 [INFO]     step:40000 t_sim:4000.00 ms
-2019-07-11 14:33:01,026 [INFO]     step:45000 t_sim:4500.00 ms
-2019-07-11 14:33:03,827 [INFO]     step:50000 t_sim:5000.00 ms
-2019-07-11 14:33:06,472 [INFO]     step:55000 t_sim:5500.00 ms
-2019-07-11 14:33:09,136 [INFO]     step:60000 t_sim:6000.00 ms
-2019-07-11 14:33:11,705 [INFO]     step:65000 t_sim:6500.00 ms
-2019-07-11 14:33:14,619 [INFO]     step:70000 t_sim:7000.00 ms
-2019-07-11 14:33:17,299 [INFO]     step:75000 t_sim:7500.00 ms
-2019-07-11 14:33:19,817 [INFO]     step:80000 t_sim:8000.00 ms
-2019-07-11 14:33:22,264 [INFO]     step:85000 t_sim:8500.00 ms
-2019-07-11 14:33:24,607 [INFO]     step:90000 t_sim:9000.00 ms
-2019-07-11 14:33:26,918 [INFO]     step:95000 t_sim:9500.00 ms
-2019-07-11 14:33:29,331 [INFO]     step:100000 t_sim:10000.00 ms
-2019-07-11 14:33:30,858 [INFO] Simulation completed in 53.9 seconds 
+2019-07-15 14:01:58,074 [INFO] Created log file
+2019-07-15 14:01:58,236 [INFO] Building cells.
+2019-07-15 14:01:58,373 [INFO] Building recurrent connections
+2019-07-15 14:01:58,555 [INFO] Building virtual cell stimulations for Blad_spikes
+2019-07-15 14:01:58,585 [INFO] Building virtual cell stimulations for EUS_spikes
+2019-07-15 14:01:58,617 [INFO] Building virtual cell stimulations for PAG_spikes
+2019-07-15 14:01:58,837 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-07-15 14:01:58,838 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-07-15 14:01:58,838 [INFO] Block save every 1000 steps
+2019-07-15 14:01:59,302 [INFO]     step:1000 t_sim:100.00 ms
+2019-07-15 14:01:59,758 [INFO]     step:2000 t_sim:200.00 ms
+2019-07-15 14:02:00,212 [INFO]     step:3000 t_sim:300.00 ms
+2019-07-15 14:02:00,651 [INFO]     step:4000 t_sim:400.00 ms
+2019-07-15 14:02:01,097 [INFO]     step:5000 t_sim:500.00 ms
+2019-07-15 14:02:01,556 [INFO]     step:6000 t_sim:600.00 ms
+2019-07-15 14:02:02,017 [INFO]     step:7000 t_sim:700.00 ms
+2019-07-15 14:02:02,464 [INFO]     step:8000 t_sim:800.00 ms
+2019-07-15 14:02:02,933 [INFO]     step:9000 t_sim:900.00 ms
+2019-07-15 14:02:03,379 [INFO]     step:10000 t_sim:1000.00 ms
+2019-07-15 14:02:03,816 [INFO]     step:11000 t_sim:1100.00 ms
+2019-07-15 14:02:04,265 [INFO]     step:12000 t_sim:1200.00 ms
+2019-07-15 14:02:04,725 [INFO]     step:13000 t_sim:1300.00 ms
+2019-07-15 14:02:05,189 [INFO]     step:14000 t_sim:1400.00 ms
+2019-07-15 14:02:05,638 [INFO]     step:15000 t_sim:1500.00 ms
+2019-07-15 14:02:06,088 [INFO]     step:16000 t_sim:1600.00 ms
+2019-07-15 14:02:06,538 [INFO]     step:17000 t_sim:1700.00 ms
+2019-07-15 14:02:07,001 [INFO]     step:18000 t_sim:1800.00 ms
+2019-07-15 14:02:07,470 [INFO]     step:19000 t_sim:1900.00 ms
+2019-07-15 14:02:07,928 [INFO]     step:20000 t_sim:2000.00 ms
+2019-07-15 14:02:08,391 [INFO]     step:21000 t_sim:2100.00 ms
+2019-07-15 14:02:08,846 [INFO]     step:22000 t_sim:2200.00 ms
+2019-07-15 14:02:09,302 [INFO]     step:23000 t_sim:2300.00 ms
+2019-07-15 14:02:09,754 [INFO]     step:24000 t_sim:2400.00 ms
+2019-07-15 14:02:10,214 [INFO]     step:25000 t_sim:2500.00 ms
+2019-07-15 14:02:10,663 [INFO]     step:26000 t_sim:2600.00 ms
+2019-07-15 14:02:11,141 [INFO]     step:27000 t_sim:2700.00 ms
+2019-07-15 14:02:11,605 [INFO]     step:28000 t_sim:2800.00 ms
+2019-07-15 14:02:12,076 [INFO]     step:29000 t_sim:2900.00 ms
+2019-07-15 14:02:12,553 [INFO]     step:30000 t_sim:3000.00 ms
+2019-07-15 14:02:13,003 [INFO]     step:31000 t_sim:3100.00 ms
+2019-07-15 14:02:13,459 [INFO]     step:32000 t_sim:3200.00 ms
+2019-07-15 14:02:13,940 [INFO]     step:33000 t_sim:3300.00 ms
+2019-07-15 14:02:14,399 [INFO]     step:34000 t_sim:3400.00 ms
+2019-07-15 14:02:14,854 [INFO]     step:35000 t_sim:3500.00 ms
+2019-07-15 14:02:15,340 [INFO]     step:36000 t_sim:3600.00 ms
+2019-07-15 14:02:15,819 [INFO]     step:37000 t_sim:3700.00 ms
+2019-07-15 14:02:16,300 [INFO]     step:38000 t_sim:3800.00 ms
+2019-07-15 14:02:16,768 [INFO]     step:39000 t_sim:3900.00 ms
+2019-07-15 14:02:17,237 [INFO]     step:40000 t_sim:4000.00 ms
+2019-07-15 14:02:17,708 [INFO]     step:41000 t_sim:4100.00 ms
+2019-07-15 14:02:18,174 [INFO]     step:42000 t_sim:4200.00 ms
+2019-07-15 14:02:18,644 [INFO]     step:43000 t_sim:4300.00 ms
+2019-07-15 14:02:19,105 [INFO]     step:44000 t_sim:4400.00 ms
+2019-07-15 14:02:19,582 [INFO]     step:45000 t_sim:4500.00 ms
+2019-07-15 14:02:20,067 [INFO]     step:46000 t_sim:4600.00 ms
+2019-07-15 14:02:20,544 [INFO]     step:47000 t_sim:4700.00 ms
+2019-07-15 14:02:21,008 [INFO]     step:48000 t_sim:4800.00 ms
+2019-07-15 14:02:21,469 [INFO]     step:49000 t_sim:4900.00 ms
+2019-07-15 14:02:21,962 [INFO]     step:50000 t_sim:5000.00 ms
+2019-07-15 14:02:22,434 [INFO]     step:51000 t_sim:5100.00 ms
+2019-07-15 14:02:22,902 [INFO]     step:52000 t_sim:5200.00 ms
+2019-07-15 14:02:23,381 [INFO]     step:53000 t_sim:5300.00 ms
+2019-07-15 14:02:23,857 [INFO]     step:54000 t_sim:5400.00 ms
+2019-07-15 14:02:24,331 [INFO]     step:55000 t_sim:5500.00 ms
+2019-07-15 14:02:24,808 [INFO]     step:56000 t_sim:5600.00 ms
+2019-07-15 14:02:25,280 [INFO]     step:57000 t_sim:5700.00 ms
+2019-07-15 14:02:25,767 [INFO]     step:58000 t_sim:5800.00 ms
+2019-07-15 14:02:26,246 [INFO]     step:59000 t_sim:5900.00 ms
+2019-07-15 14:02:26,718 [INFO]     step:60000 t_sim:6000.00 ms
+2019-07-15 14:02:27,189 [INFO]     step:61000 t_sim:6100.00 ms
+2019-07-15 14:02:27,651 [INFO]     step:62000 t_sim:6200.00 ms
+2019-07-15 14:02:28,119 [INFO]     step:63000 t_sim:6300.00 ms
+2019-07-15 14:02:28,603 [INFO]     step:64000 t_sim:6400.00 ms
+2019-07-15 14:02:29,083 [INFO]     step:65000 t_sim:6500.00 ms
+2019-07-15 14:02:29,611 [INFO]     step:66000 t_sim:6600.00 ms
+2019-07-15 14:02:30,152 [INFO]     step:67000 t_sim:6700.00 ms
+2019-07-15 14:02:30,677 [INFO]     step:68000 t_sim:6800.00 ms
+2019-07-15 14:02:31,338 [INFO]     step:69000 t_sim:6900.00 ms
+2019-07-15 14:02:31,992 [INFO]     step:70000 t_sim:7000.00 ms
+2019-07-15 14:02:32,464 [INFO]     step:71000 t_sim:7100.00 ms
+2019-07-15 14:02:32,944 [INFO]     step:72000 t_sim:7200.00 ms
+2019-07-15 14:02:33,414 [INFO]     step:73000 t_sim:7300.00 ms
+2019-07-15 14:02:33,888 [INFO]     step:74000 t_sim:7400.00 ms
+2019-07-15 14:02:34,355 [INFO]     step:75000 t_sim:7500.00 ms
+2019-07-15 14:02:34,811 [INFO]     step:76000 t_sim:7600.00 ms
+2019-07-15 14:02:35,288 [INFO]     step:77000 t_sim:7700.00 ms
+2019-07-15 14:02:35,740 [INFO]     step:78000 t_sim:7800.00 ms
+2019-07-15 14:02:36,227 [INFO]     step:79000 t_sim:7900.00 ms
+2019-07-15 14:02:36,820 [INFO]     step:80000 t_sim:8000.00 ms
+2019-07-15 14:02:37,392 [INFO]     step:81000 t_sim:8100.00 ms
+2019-07-15 14:02:37,891 [INFO]     step:82000 t_sim:8200.00 ms
+2019-07-15 14:02:38,347 [INFO]     step:83000 t_sim:8300.00 ms
+2019-07-15 14:02:38,828 [INFO]     step:84000 t_sim:8400.00 ms
+2019-07-15 14:02:39,366 [INFO]     step:85000 t_sim:8500.00 ms
+2019-07-15 14:02:39,904 [INFO]     step:86000 t_sim:8600.00 ms
+2019-07-15 14:02:40,352 [INFO]     step:87000 t_sim:8700.00 ms
+2019-07-15 14:02:40,875 [INFO]     step:88000 t_sim:8800.00 ms
+2019-07-15 14:02:41,331 [INFO]     step:89000 t_sim:8900.00 ms
+2019-07-15 14:02:41,783 [INFO]     step:90000 t_sim:9000.00 ms
+2019-07-15 14:02:42,254 [INFO]     step:91000 t_sim:9100.00 ms
+2019-07-15 14:02:42,730 [INFO]     step:92000 t_sim:9200.00 ms
+2019-07-15 14:02:43,243 [INFO]     step:93000 t_sim:9300.00 ms
+2019-07-15 14:02:43,698 [INFO]     step:94000 t_sim:9400.00 ms
+2019-07-15 14:02:44,198 [INFO]     step:95000 t_sim:9500.00 ms
+2019-07-15 14:02:44,744 [INFO]     step:96000 t_sim:9600.00 ms
+2019-07-15 14:02:45,194 [INFO]     step:97000 t_sim:9700.00 ms
+2019-07-15 14:02:45,697 [INFO]     step:98000 t_sim:9800.00 ms
+2019-07-15 14:02:46,139 [INFO]     step:99000 t_sim:9900.00 ms
+2019-07-15 14:02:46,587 [INFO]     step:100000 t_sim:10000.00 ms
+2019-07-15 14:02:48,171 [INFO] Simulation completed in 49.33 seconds 
