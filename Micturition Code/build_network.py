@@ -29,7 +29,7 @@ numBladmn   = 10
 
 # Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numEUSaff, pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numEUSaff,pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numPAGaff, pop_name='PAGaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numIND, pop_name='IND',model_type='biophysical',model_template='hoc:IND',morphology='blank.swc')
 net.add_nodes(N=numHypo, pop_name='Hypo',model_type='biophysical',model_template='hoc:HYPO',morphology='blank.swc')

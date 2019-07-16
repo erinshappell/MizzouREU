@@ -20,6 +20,8 @@ b_vols = []
 b_pres = []
 b_aff_frs = []
 
+press_thres = 35 # cm H20
+
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
 # Huge thank you to Kael Dai, Allen Institute 2019 for the template code
@@ -32,11 +34,13 @@ class FeedbackLoop(SimulatorMod):
 
         self._high_level_neurons = []
         self._low_level_neurons = []
+        self._eus_neurons = []
 
         self._synapses = {}
         self._netcons = {}
 
         self._spike_records = {}
+        self._glob_press = 0
 
     def _set_spike_detector(self, sim):
         for gid in self._low_level_neurons:
@@ -55,10 +59,23 @@ class FeedbackLoop(SimulatorMod):
         psg.add(node_ids=[0], firing_rate=firing_rate, times=(next_block_tstart, next_block_tstop))
         self._spike_events = psg.get_times(0)
 
+        # Update firing rate of bladder afferent neurons
         for gid in self._high_level_neurons:
             nc = self._netcons[gid]
             for t in self._spike_events:
                 nc.event(t)
+
+        # If pressure is maxxed, update firing rate of EUS motor neurons 
+        # Guarding reflex
+        if self._glob_press > press_thres:
+            psg = PoissonSpikeGenerator()
+            psg.add(node_ids=[0], firing_rate=self._glob_press/5, times=(next_block_tstart, next_block_tstop))
+            self._spike_events = psg.get_times(0)
+
+            for gid in self._eus_neurons:
+                nc = self._netcons[gid]
+                for t in self._spike_events:
+                    nc.event(t)
 
     def initialize(self, sim):
         # Attach a NetCon/synapse on the high-level neuron(s) soma. We can use the NetCon.event(time) method to send
@@ -67,7 +84,26 @@ class FeedbackLoop(SimulatorMod):
         vec_stim = h.VecStim()
         vec_stim.play(spikes)
         self._high_level_neurons = list(sim.net.get_node_set('high_level_neurons').gids())
+        self._eus_neurons = list(sim.net.get_node_set('eus_neurons').gids())
+
         for gid in self._high_level_neurons:
+            cell = sim.net.get_cell_gid(gid)
+
+            # Create synapse
+            # These values will determine how the high-level neuron behaves with the input
+            new_syn = h.Exp2Syn(0.7, cell.hobj.soma[0])
+            new_syn.e = 0.0
+            new_syn.tau1 = 1.0
+            new_syn.tau2 = 3.0
+
+            nc = h.NetCon(vec_stim, new_syn)
+            nc.weight[0] = 0.012
+            nc.delay = 1.0
+
+            self._synapses[gid] = new_syn
+            self._netcons[gid] = nc
+
+        for gid in self._eus_neurons:
             cell = sim.net.get_cell_gid(gid)
 
             # Create synapse
@@ -104,7 +140,7 @@ class FeedbackLoop(SimulatorMod):
         We can use this to get the firing rate of PGN during the last block and use it to calculate
         firing rate for bladder afferent neuron
         """
-
+        print('global pressure is %.2f' % self._glob_press)
         # Calculate the avg number of spikes per neuron
         block_length = sim.nsteps_block*sim.dt/1000.0  #  time length of previous block of simulation TODO: precalcualte
         n_gids = 0
@@ -127,15 +163,12 @@ class FeedbackLoop(SimulatorMod):
             if f < 0:
                 f *= -1
 
-            if f > 15.0:
-                f = 15.0
-
             return f
 
         # Grill function for polynomial fit according to bladder volume
 	    # Grill, et al. 2016
         def blad_vol(vol):
-            f = 1.5*vol - 10
+            f = 1.5*20*vol - 10
 
             return f
 
@@ -148,7 +181,7 @@ class FeedbackLoop(SimulatorMod):
             if p < 0:
                 p = 0
 
-            return p
+            return p # Using a scaling factor of 6 to get correct value range
 
         # Grill function returning bladder afferent firing rate in units of Hz
 	    # Grill, et al. 2016
@@ -159,7 +192,7 @@ class FeedbackLoop(SimulatorMod):
             if fr < 0:
                 fr *= -1 
 
-            return 5*fr # Using scaling factor of 5 here to get the correct firing rate range 
+            return fr # Using scaling factor of 5 here to get the correct firing rate range 
 
         # Calculate bladder volume using Grill's polynomial fit equation
         v_init = 0.05       # TODO: get biological value for initial bladder volume
@@ -168,22 +201,19 @@ class FeedbackLoop(SimulatorMod):
         void = 4.6 	 		# ml/min (Streng et al. 2002)
         void /= (1000 * 60) # Scale from ml/min to ml/ms
         max_v = 0.76 		# ml (Grill et al. 2019)
+        vol = v_init
 
         # Update blad aff firing rate
         if len(tvec) > 0:
             PGN_fr = pgn_fire_rate(fr)
 
             # Filling: 0 - 7000 ms
-            if tvec[0] < 7000:
+            if tvec[0] < 7000 and vol < max_v:
                 vol = fill*tvec[0]*150 + v_init
 
             # Voiding: 7000 - 10,000 ms
             else:
                 vol = max_v - void*(10000-tvec[0])*100
-
-            # Maintain maximum volume
-            if vol > max_v:
-                vol = max_v
 
             # Maintain minimum volume
             if vol < v_init:
@@ -192,6 +222,10 @@ class FeedbackLoop(SimulatorMod):
 
             # Calculate pressure using Grill equation
             p = pressure(PGN_fr, grill_vol)
+
+            # Update global pressure (to be used to determine if EUS motor
+            # needs to be updated for guarding reflex)
+            self._glob_press = p 
 
             # Calculate bladder afferent firing rate using Grill equation
             bladaff_fr = blad_aff_fr(p)
@@ -231,21 +265,114 @@ def run(config_file):
     sim.add_mod(fbmod)  # Attach the above module to the simulator.
     sim.run()
 
-    # Plotting firing rates
+    # Plot bladder afferent firing rate
     spike_trains = SpikeTrains.from_sonata('output/spikes.h5')
-    for gid in [0, 1]:
+    
+    ba_means = np.zeros(sim.n_steps)
+    ba_stdevs = np.zeros(sim.n_steps)
+    ba_fr_conv = np.zeros((10,sim.n_steps))
+    plt.figure()
+    for gid in np.arange(0, 10):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
             spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
         window_size = 10000
         window = np.zeros(window_size)
         window[0:window_size] = 1
-        plt.plot(np.convolve(spikes, window), label=gid)
-    plt.xlabel('Sample')
-    plt.ylabel('Firing Rate [Hz]')
-    plt.legend()
 
-    # Plotting bladder volume and bladder pressure
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(ba_means)):
+            ba_means[n] += frs[n]
+            ba_fr_conv[gid][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(ba_means)):
+        ba_means[n] /= 10
+        ba_stdevs[n] = np.std(ba_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_ba_means = []
+    plt_ba_stdevs = []
+    for n in np.arange(0,len(ba_means),1000):
+        plt_ba_means.append(ba_means[n])   
+        plt_ba_stdevs.append(ba_stdevs[n]) 
+
+    plt.errorbar(np.arange(0,len(ba_means),1000), plt_ba_means, plt_ba_stdevs, marker='^', ecolor='r')
+    plt.xlabel('Sample')
+    plt.ylabel('Bladder Afferent Firing Rate (FR) [Hz]')
+
+    # Plot PGN firing rate
+    pgn_means = np.zeros(sim.n_steps)
+    pgn_stdevs = np.zeros(sim.n_steps)
+    pgn_fr_conv = np.zeros((10,sim.n_steps))
+    plt.figure()
+    for gid in np.arange(80, 90):
+        spikes = np.zeros(sim.n_steps, dtype=np.int)
+        if len(spike_trains.get_times(gid)) > 0:
+            spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
+        window_size = 10000
+        window = np.zeros(window_size)
+        window[0:window_size] = 1
+
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(pgn_means)):
+            pgn_means[n] += frs[n]
+            pgn_fr_conv[gid % 80][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(pgn_means)):
+        pgn_means[n] /= 10
+        pgn_stdevs[n] = np.std(pgn_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_pgn_means = []
+    plt_pgn_stdevs = []
+    for n in np.arange(0,len(pgn_means),1000):
+        plt_pgn_means.append(pgn_means[n])   
+        plt_pgn_stdevs.append(pgn_stdevs[n]) 
+
+    plt.errorbar(np.arange(0,len(pgn_means),1000), plt_pgn_means, plt_pgn_stdevs, marker='^', ecolor='r')
+    plt.xlabel('Sample')
+    plt.ylabel('PGN Firing Rate (FR) [Hz]')
+
+    # Plot EUS motor neuron firing rate
+    eus_means = np.zeros(sim.n_steps)
+    eus_stdevs = np.zeros(sim.n_steps)
+    eus_fr_conv = np.zeros((10,sim.n_steps))
+    plt.figure()
+    for gid in np.arange(110, 120):
+        spikes = np.zeros(sim.n_steps, dtype=np.int)
+        if len(spike_trains.get_times(gid)) > 0:
+            spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
+        window_size = 10000
+        window = np.zeros(window_size)
+        window[0:window_size] = 1
+
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(eus_means)):
+            eus_means[n] += frs[n]
+            eus_fr_conv[gid % 110][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(eus_means)):
+        eus_means[n] /= 10
+        eus_stdevs[n] = np.std(eus_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_eus_means = []
+    plt_eus_stdevs = []
+    for n in np.arange(0,len(eus_means),1000):
+        plt_eus_means.append(eus_means[n])   
+        plt_eus_stdevs.append(eus_stdevs[n]) 
+
+    plt.errorbar(np.arange(0,len(eus_means),1000), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
+    plt.xlabel('Sample')
+    plt.ylabel('EUS Motor Neuron Firing Rate (FR) [Hz]')
+
+    # Plot bladder volume and bladder pressure
     fig1, ax1_1 = plt.subplots()
 
     color = 'tab:red'
@@ -262,46 +389,6 @@ def run(config_file):
     ax2_1.tick_params(axis='y', labelcolor=color)
 
     fig1.tight_layout()  # otherwise the right y-label is slightly clipped
-
-    # Plotting PGN firing rate and bladder afferent firing rate
-    avg_pgn = stat.mean(pgn_frs)
-    stdev_pgn = stat.stdev(pgn_frs)
-    print('Average PGN firing rate is %.2f' %avg_pgn)
-    print('Standard deviation of PGN firing rate is %.2f' %stdev_pgn)
-
-    avg_ba = stat.mean(b_aff_frs)
-    stdev_ba = stat.stdev(b_aff_frs)
-    print('Average bladder afferent firing rate is %.2f' %avg_ba)
-    print('Standard deviation of bladder afferent firing rate is %.2f' %stdev_ba)
-
-    fig2, ax1_2 = plt.subplots()
-
-    color = 'tab:green'
-    ax1_2.set_xlabel('Time (t) [ms]')
-    ax1_2.set_ylabel('PGN Firing Rate [Hz]', color=color)
-    ax1_2.plot(times, pgn_frs, color=color)
-    ax1_2.tick_params(axis='y', labelcolor=color)
-
-    ax2_2 = ax1_2.twinx()  # instantiate a second axes that shares the same x-axis
-
-    color = 'tab:orange'
-    ax2_2.set_ylabel('Bladder Afferent Firing Rate [Hz]', color=color)  # we already handled the x-label with ax1
-    ax2_2.plot(times, b_aff_frs, color=color)
-    ax2_2.tick_params(axis='y', labelcolor=color)
-
-    fig2.tight_layout()  # otherwise the right y-label is slightly clipped
-
-    plt.figure()
-    plt.xlabel('Time (t) [s]')
-    plt.ylabel('PGN Firing Rate (FR) [Hz]')
-    plt.errorbar(times, pgn_frs, stdev_ba, marker='^', color='green')
-    plt.plot(times, np.full(len(times), avg_pgn), '-k')
-
-    plt.figure()
-    plt.xlabel('Time (t) [s]')
-    plt.ylabel('Bladder Afferent Firing Rate (FR) [Hz]')
-    plt.errorbar(times, b_aff_frs, stdev_ba, marker='^', color='orange')
-    plt.plot(times, np.full(len(times), avg_ba), '-k')
 
     plt.show()
 

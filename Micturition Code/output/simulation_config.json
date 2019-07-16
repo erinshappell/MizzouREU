@@ -58,6 +58,9 @@
     },
     "high_level_neurons": {
       "level": "high"
+    },
+    "eus_neurons": {
+      "pop_name": "EUSmn"
     }
   },
   "network": "./circuit_config.json",
