@@ -20,7 +20,7 @@ b_vols = []
 b_pres = []
 b_aff_frs = []
 
-press_thres = 35 # cm H20
+press_thres = 40 # cm H20
 
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
@@ -69,7 +69,7 @@ class FeedbackLoop(SimulatorMod):
         # Guarding reflex
         if self._glob_press > press_thres:
             psg = PoissonSpikeGenerator()
-            psg.add(node_ids=[0], firing_rate=self._glob_press/5, times=(next_block_tstart, next_block_tstop))
+            psg.add(node_ids=[0], firing_rate=15, times=(next_block_tstart, next_block_tstop))
             self._spike_events = psg.get_times(0)
 
             for gid in self._eus_neurons:
@@ -97,7 +97,7 @@ class FeedbackLoop(SimulatorMod):
             new_syn.tau2 = 3.0
 
             nc = h.NetCon(vec_stim, new_syn)
-            nc.weight[0] = 0.012
+            nc.weight[0] = 0.5
             nc.delay = 1.0
 
             self._synapses[gid] = new_syn
@@ -108,13 +108,13 @@ class FeedbackLoop(SimulatorMod):
 
             # Create synapse
             # These values will determine how the high-level neuron behaves with the input
-            new_syn = h.Exp2Syn(0.7, cell.hobj.soma[0])
+            new_syn = h.Exp2Syn(0.9, cell.hobj.soma[0])
             new_syn.e = 0.0
             new_syn.tau1 = 1.0
             new_syn.tau2 = 3.0
 
             nc = h.NetCon(vec_stim, new_syn)
-            nc.weight[0] = 0.012
+            nc.weight[0] = 0.5
             nc.delay = 1.0
 
             self._synapses[gid] = new_syn
@@ -361,14 +361,15 @@ def run(config_file):
         eus_means[n] /= 10
         eus_stdevs[n] = np.std(eus_fr_conv[:,n])
 
-    # Only plot one point each 1000 samples
+    # Only plot one point each 2000 samples
     plt_eus_means = []
     plt_eus_stdevs = []
-    for n in np.arange(0,len(eus_means),1000):
+    for n in np.arange(0,len(eus_means),2000):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(eus_means),1000), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
+    plt.errorbar(np.arange(0,len(eus_means),2000), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
+    plt.plot(times, b_pres, '--')
     plt.xlabel('Sample')
     plt.ylabel('EUS Motor Neuron Firing Rate (FR) [Hz]')
 

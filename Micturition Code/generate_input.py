@@ -212,7 +212,7 @@ if __name__ == '__main__':
 
 	hz = [1.0,15.0,1.0] # Using basal firing rate of pudendal (EUS) afferent for PAG afferent
 				   		# 1.0 Hz (Habler et al. 1993)
-				   		# Using 15.0 Hz as high firng rate of PAG afferent
+				   		# Using 15.0 Hz as high firing rate of PAG afferent
 				   		# (Blok et al. 2000)
 	start = [0.0, begin_void - delay, end_void + delay]
 	end= [begin_void - delay , end_void + delay, 10000.0]
