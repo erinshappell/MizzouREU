@@ -1,20 +1,20 @@
-2019-07-17 15:43:08,286 [INFO] Created log file
-2019-07-17 15:43:08,397 [INFO] Building cells.
-2019-07-17 15:43:08,509 [INFO] Building recurrent connections
-2019-07-17 15:43:08,685 [INFO] Building virtual cell stimulations for Blad_spikes
-2019-07-17 15:43:08,710 [INFO] Building virtual cell stimulations for EUS_spikes
-2019-07-17 15:43:08,735 [INFO] Building virtual cell stimulations for PAG_spikes
-2019-07-17 15:43:08,985 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
-2019-07-17 15:43:08,985 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
-2019-07-17 15:43:08,986 [INFO] Block save every 10000 steps
-2019-07-17 15:43:13,259 [INFO]     step:10000 t_sim:1000.00 ms
-2019-07-17 15:43:17,545 [INFO]     step:20000 t_sim:2000.00 ms
-2019-07-17 15:43:21,845 [INFO]     step:30000 t_sim:3000.00 ms
-2019-07-17 15:43:26,147 [INFO]     step:40000 t_sim:4000.00 ms
-2019-07-17 15:43:30,486 [INFO]     step:50000 t_sim:5000.00 ms
-2019-07-17 15:43:34,991 [INFO]     step:60000 t_sim:6000.00 ms
-2019-07-17 15:43:39,653 [INFO]     step:70000 t_sim:7000.00 ms
-2019-07-17 15:43:45,904 [INFO]     step:80000 t_sim:8000.00 ms
-2019-07-17 15:43:50,394 [INFO]     step:90000 t_sim:9000.00 ms
-2019-07-17 15:43:54,764 [INFO]     step:100000 t_sim:10000.00 ms
-2019-07-17 15:43:56,211 [INFO] Simulation completed in 47.23 seconds 
+2019-07-18 12:01:58,204 [INFO] Created log file
+2019-07-18 12:01:58,403 [INFO] Building cells.
+2019-07-18 12:01:58,589 [INFO] Building recurrent connections
+2019-07-18 12:01:58,817 [INFO] Building virtual cell stimulations for Blad_spikes
+2019-07-18 12:01:58,847 [INFO] Building virtual cell stimulations for EUS_spikes
+2019-07-18 12:01:58,876 [INFO] Building virtual cell stimulations for PAG_spikes
+2019-07-18 12:01:59,165 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-07-18 12:01:59,165 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-07-18 12:01:59,165 [INFO] Block save every 10000 steps
+2019-07-18 12:02:04,286 [INFO]     step:10000 t_sim:1000.00 ms
+2019-07-18 12:02:08,937 [INFO]     step:20000 t_sim:2000.00 ms
+2019-07-18 12:02:13,255 [INFO]     step:30000 t_sim:3000.00 ms
+2019-07-18 12:02:17,774 [INFO]     step:40000 t_sim:4000.00 ms
+2019-07-18 12:02:22,323 [INFO]     step:50000 t_sim:5000.00 ms
+2019-07-18 12:02:27,020 [INFO]     step:60000 t_sim:6000.00 ms
+2019-07-18 12:02:31,899 [INFO]     step:70000 t_sim:7000.00 ms
+2019-07-18 12:02:38,644 [INFO]     step:80000 t_sim:8000.00 ms
+2019-07-18 12:02:44,824 [INFO]     step:90000 t_sim:9000.00 ms
+2019-07-18 12:02:51,027 [INFO]     step:100000 t_sim:10000.00 ms
+2019-07-18 12:02:52,576 [INFO] Simulation completed in 53.41 seconds 

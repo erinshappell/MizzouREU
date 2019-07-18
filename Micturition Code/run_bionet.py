@@ -21,6 +21,8 @@ b_pres = []
 b_aff_frs = []
 
 press_thres = 40 # cm H20
+                 # Lingala, et al. 2016
+change_thres = 10
 
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
@@ -41,6 +43,7 @@ class FeedbackLoop(SimulatorMod):
 
         self._spike_records = {}
         self._glob_press = 0
+        self._prev_glob_press = 0
 
     def _set_spike_detector(self, sim):
         for gid in self._low_level_neurons:
@@ -67,7 +70,8 @@ class FeedbackLoop(SimulatorMod):
 
         # If pressure is maxxed, update firing rate of EUS motor neurons 
         # Guarding reflex
-        if self._glob_press > press_thres:
+        press_change = self._prev_glob_press - self._glob_press
+        if self._glob_press > press_thres or press_change > change_thres:
             psg = PoissonSpikeGenerator()
             psg.add(node_ids=[0], firing_rate=150, times=(next_block_tstart, next_block_tstop))
             self._spike_events = psg.get_times(0)
@@ -225,6 +229,7 @@ class FeedbackLoop(SimulatorMod):
 
             # Update global pressure (to be used to determine if EUS motor
             # needs to be updated for guarding reflex)
+            self._prev_glob_press = self._glob_press
             self._glob_press = p 
 
             # Calculate bladder afferent firing rate using Grill equation
