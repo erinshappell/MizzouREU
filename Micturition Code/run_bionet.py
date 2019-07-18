@@ -303,8 +303,8 @@ def run(config_file):
         plt_ba_means.append(ba_means[n])   
         plt_ba_stdevs.append(ba_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(ba_means),1000), plt_ba_means, plt_ba_stdevs, marker='^', ecolor='r')
-    plt.xlabel('Sample')
+    plt.errorbar(np.arange(0,len(ba_means)/10,100), plt_ba_means, plt_ba_stdevs, marker='^', ecolor='r')
+    plt.xlabel('Time (t) [ms]')
     plt.ylabel('Bladder Afferent Firing Rate (FR) [Hz]')
 
     # Plot PGN firing rate
@@ -338,8 +338,8 @@ def run(config_file):
         plt_pgn_means.append(pgn_means[n])   
         plt_pgn_stdevs.append(pgn_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(pgn_means),1000), plt_pgn_means, plt_pgn_stdevs, marker='^', ecolor='r')
-    plt.xlabel('Sample')
+    plt.errorbar(np.arange(0,len(pgn_means)/10,100), plt_pgn_means, plt_pgn_stdevs, marker='^', ecolor='r')
+    plt.xlabel('Time (t) [ms]')
     plt.ylabel('PGN Firing Rate (FR) [Hz]')
 
     # Plot EUS motor neuron firing rate
@@ -373,8 +373,9 @@ def run(config_file):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(eus_means),2000), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
-    plt.xlabel('Sample')
+    plt.errorbar(np.arange(0,len(eus_means)/10,200), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
+    #plt.plot(times, b_pres, '--') 
+    plt.xlabel('Time (t) [ms]')
     plt.ylabel('EUS Motor Neuron Firing Rate (FR) [Hz]')
 
     # Plot bladder volume and bladder pressure
