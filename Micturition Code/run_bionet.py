@@ -69,7 +69,7 @@ class FeedbackLoop(SimulatorMod):
         # Guarding reflex
         if self._glob_press > press_thres:
             psg = PoissonSpikeGenerator()
-            psg.add(node_ids=[0], firing_rate=15, times=(next_block_tstart, next_block_tstop))
+            psg.add(node_ids=[0], firing_rate=150, times=(next_block_tstart, next_block_tstop))
             self._spike_events = psg.get_times(0)
 
             for gid in self._eus_neurons:
@@ -369,7 +369,6 @@ def run(config_file):
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
     plt.errorbar(np.arange(0,len(eus_means),2000), plt_eus_means, plt_eus_stdevs, marker='^', ecolor='r')
-    plt.plot(times, b_pres, '--')
     plt.xlabel('Sample')
     plt.ylabel('EUS Motor Neuron Firing Rate (FR) [Hz]')
 

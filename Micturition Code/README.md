@@ -6,7 +6,7 @@ This version of the Nair Lab BMTK model for the Rat LUT was developed by Erin Sh
 
 ## Primary Contributions
 * All (known) sources for values and connections have been added via inline comments.
-* Hoc templates have been added (but are not complete due to a lack of data on some values) for the following neurons:
+* Hoc templates have been added (but are not complete due to a lack of data on some values) for the following neurons using data from Vinay's document _LUT-extra.docx_:
   * Hypogastric
   * IMG
   * IND
@@ -40,6 +40,16 @@ import synapses
 synapses.load()
 
 ```
+
+* Bladder afferent <<>> PGN feedback loop is now closed
+  * Used sample code provided by Kael Dai, Allen Institute 2019 to create the code for this
+  * After each block in simulation, the firing rate of the MPG is recorded and used to calculate the firing rate for the bladder afferent using Grill's equations for pressure and bladder afferent firing rate (Grill, et al. 2016)
+
+* Work in Progress: Implementing Guarding Reflex
+  * Guarding reflex: the EUS muscles will contract in response to spikes in bladder pressure
+  * Implementing this using the feedback loop process used in the bladder afferent <<>> PGN feedback loop
+  * Idea is to use pressure to determine whether the EUS motor neuron will have brief increases in an already contracting spiking rate
+
 
 
 
