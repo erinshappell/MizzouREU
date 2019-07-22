@@ -1,7 +1,11 @@
 import numpy as np
 from bmtk.builder.networks import NetworkBuilder
 from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
+import cell_positions as p
+import math
+import random
 
+random.seed(42)
 output_dir='network'
 
 #######################################################################
@@ -23,9 +27,17 @@ numINmminus = 10
 numPGN      = 10
 numFB       = 10
 numIMG      = 10
-numMPG      = 10
+numMPG      = 200
 numEUSmn    = 10
-numBladmn   = 10
+numBladmn   = 200
+
+# Get cell positions for connectivity --------------------
+p_blad = p.pos_blad()
+p_mpg = p.pos_mpg()
+
+# Assert to ensure we've setup our arrays correctly
+assert len(p_blad) == numBladmn
+assert len(p_mpg) == numMPG
 
 # Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
@@ -38,9 +50,9 @@ net.add_nodes(N=numINmminus, pop_name='INmminus',model_type='biophysical',model_
 net.add_nodes(N=numPGN, level='low', pop_name='PGN',model_type='biophysical',model_template='hoc:PGN',morphology='blank.swc')
 net.add_nodes(N=numFB, pop_name='FB',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numIMG, pop_name='IMG',model_type='biophysical',model_template='hoc:IMG',morphology='blank.swc')
-net.add_nodes(N=numMPG, pop_name='MPG',model_type='biophysical',model_template='hoc:MPG',morphology='blank.swc')
+net.add_nodes(N=numMPG, pop_name='MPG',model_type='biophysical',model_template='hoc:MPG',morphology='blank.swc',positions=p_mpg)
 net.add_nodes(N=numEUSmn, pop_name='EUSmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numBladmn, pop_name='Bladmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numBladmn, pop_name='Bladmn',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc',positions=p_blad)
 
 ##################################################################################
 ####################### Connect the cells ########################################
@@ -112,6 +124,50 @@ def one_to_one(source, target):
         return None
 
     return tmp_nsyn
+
+def gaussian_dist_connector(source,target,mu,sigma,xy_only=True):
+    """
+    mu = b
+    sigma^2 = c^2
+    g(x) = (1/sigma*sqrt(2*pi))*e^((-1/2*((x-mu)/sigma))^2)
+    """
+    sid = source.node_id
+    tid = target.node_id
+    source_name = source['pop_name']
+    target_name = target['pop_name']
+
+    x_ind,y_ind,z_ind = 0,1,2
+    dx = target['positions'][x_ind] - source['positions'][x_ind]
+    dy = target['positions'][y_ind] - source['positions'][y_ind]
+    dz = target['positions'][z_ind] - source['positions'][z_ind]
+
+    if xy_only:
+        dist = math.sqrt(dx**2 + dy**2)
+    else:
+        dist = math.sqrt(dx**2 + dy**2 + dz**2)
+
+    prob = (1/sigma*math.sqrt(2*math.pi))*math.exp((-1/2*((dist-mu)/sigma))**2)
+    if random.random()*100 > prob: # Connect
+        print("connecting {} cell {} to {} cell {} (dist:{})".format(source_name,sid,target_name,tid,dist))
+        return 1
+    else:# Don't connect
+        return 0
+    
+def percent_connector(source,target,percent):
+    """
+    For connections where types don't have the same number of cells
+    And positions are undefined for one type
+    """
+    sid = source.node_id
+    tid = target.node_id
+    source_name = source['pop_name']
+    target_name = target['pop_name']
+
+    if random.random() < (float(percent)/100):
+        print("connecting {} cell {} to {} cell {}".format(source_name,sid,target_name,tid))
+        return 1
+    else:
+        return 0
 
 # Add connections -----------------------------------------
 # Blad afferent --> INd (Grill et al. 2016)
@@ -228,7 +284,8 @@ net.add_edges(source=net.nodes(pop_name='INmminus'), target=net.nodes(pop_name='
 
 # PGN --> MPG (Beckel et al. 2015)
 net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='MPG'),
-                   connection_rule=one_to_one,
+                   connection_rule=percent_connector,
+                   connection_params={'percent':100.0},
                    syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
@@ -258,7 +315,8 @@ net.add_edges(source=net.nodes(pop_name='FB'), target=net.nodes(pop_name='IND'),
 
 # MPG --> Bladder MN (Beckel et al. 2015)
 net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladmn'),
-                   connection_rule=one_to_one,
+                   connection_rule=gaussian_dist_connector,
+                   connection_params={'mu':1,'sigma':1},
                    syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
@@ -268,7 +326,8 @@ net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladm
 
 # IMG --> Bladder MN (Beckel et al. 2015)
 net.add_edges(source=net.nodes(pop_name='IMG'), target=net.nodes(pop_name='Bladmn'),
-                   connection_rule=one_to_one,
+                   connection_rule=percent_connector,
+                   connection_params={'percent':100.0},
                    syn_weight=10.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
