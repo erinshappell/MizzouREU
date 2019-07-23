@@ -16,23 +16,23 @@ print("\nCreating Cells")
 net = NetworkBuilder('LUT')
 
 # Specify number of cells in each population --------------
-numBladaff  = 250
-numEUSaff   = 250
-numPAGaff   = 250
-numIND      = 25
-numHypo     = 25
-numINmplus  = 25
-numINmminus = 25
-numPGN      = 25
-numFB       = 25
-numIMG      = 250
-numMPG      = 250
-numEUSmn    = 25
-numBladmn   = 25
+numBladaff  = 10 # 0 - 249
+numEUSaff   = 10 # 250 - 499
+numPAGaff   = 10 # 500 - 749
+numIND      = 10  # 750 - 774
+numHypo     = 10  # 775 - 799
+numINmplus  = 10  # 800 - 824
+numINmminus = 10  # 825 - 849
+numPGN      = 10  # 850 - 874
+numFB       = 10  # 875 - 899
+numIMG      = 10 # 900 - 1149
+numMPG      = 10 # 1150 - 1399
+numEUSmn    = 10  # 1400 - 1424
+numBladmn   = 10  # 1425 - 1449
 
 # Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
-net.add_nodes(N=numEUSaff,pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
+net.add_nodes(N=numEUSaff, level='high',pop_name='EUSaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numPAGaff, pop_name='PAGaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
 net.add_nodes(N=numIND, pop_name='IND',model_type='biophysical',model_template='hoc:IND',morphology='blank.swc')
 net.add_nodes(N=numHypo, pop_name='Hypo',model_type='biophysical',model_template='hoc:HYPO',morphology='blank.swc')
@@ -493,9 +493,9 @@ Blad_aff_virt = NetworkBuilder('Blad_aff_virt') # Virtual cells delivering input
 EUS_aff_virt = NetworkBuilder('EUS_aff_virt')   # Virtual cells delivering input to EUS
 PAG_aff_virt = NetworkBuilder('PAG_aff_virt')   # Virtual cells delivering input to PAG/PMC
 
-Blad_aff_virt.add_nodes(N=250, pop_name = 'Blad_aff_virt', model_type='virtual', potential='exc')
-EUS_aff_virt.add_nodes(N=250, pop_name = 'EUS_aff_virt', model_type='virtual', potential='exc')
-PAG_aff_virt.add_nodes(N=250, pop_name = 'PAG_aff_virt', model_type='virtual', potential='exc')
+Blad_aff_virt.add_nodes(N=numBladaff, pop_name = 'Blad_aff_virt', model_type='virtual', potential='exc')
+EUS_aff_virt.add_nodes(N=numEUSaff, pop_name = 'EUS_aff_virt', model_type='virtual', potential='exc')
+PAG_aff_virt.add_nodes(N=numPAGaff, pop_name = 'PAG_aff_virt', model_type='virtual', potential='exc')
 
 Blad_aff_virt.add_edges(source=Blad_aff_virt.nodes(), target=net.nodes(pop_name='Bladaff'),
                    connection_rule=percent_connector,

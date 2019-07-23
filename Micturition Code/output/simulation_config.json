@@ -54,12 +54,15 @@
       "model_type": "virtual"
     },
     "low_level_neurons": {
-      "level": "low"
+      "level": "low",
+      "pop_name": "PGN"
     },
     "high_level_neurons": {
-      "level": "high"
+      "level": "high",
+      "pop_name": "Bladaff"
     },
     "eus_neurons": {
+      "level": "high",
       "pop_name": "EUSaff"
     }
   },

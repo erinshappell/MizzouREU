@@ -18,11 +18,38 @@ times = []
 b_vols = []
 b_pres = []
 
-
 press_thres = 40 # cm H20
                  # Lingala, et al. 2016
 change_thres = 10 # cm H20 
                  # Need biological value for this
+
+numBladaff  = 10
+numEUSaff   = 10
+numPAGaff   = 10
+numIND      = 10
+numHypo     = 10
+numINmplus  = 10
+numINmminus = 10
+numPGN      = 10
+numFB       = 10
+numIMG      = 10
+numMPG      = 10
+numEUSmn    = 10
+numBladmn   = 10
+
+Blad_gids = 0
+EUS_gids = Blad_gids + numBladaff
+PAG_gids = EUS_gids + numEUSaff
+IND_gids = PAG_gids + numPAGaff
+Hypo_gids = IND_gids + numIND
+INmplus_gids = Hypo_gids + numHypo
+INmminus_gids = INmplus_gids + numINmplus
+PGN_gids = INmminus_gids + numINmminus
+FB_gids = PGN_gids + numPGN
+IMG_gids = FB_gids + numFB
+MPG_gids = IMG_gids + numIMG
+EUSmn_gids = MPG_gids + numMPG
+Bladmn_gids = EUSmn_gids + numEUSmn
 
 bionet.pyfunction_cache.add_cell_model(loadHOC, directive='hoc', model_type='biophysical')
 
@@ -146,7 +173,7 @@ class FeedbackLoop(SimulatorMod):
         We can use this to get the firing rate of PGN during the last block and use it to calculate
         firing rate for bladder afferent neuron
         """
-        print('global pressure is %.2f' % self._glob_press)
+
         # Calculate the avg number of spikes per neuron
         block_length = sim.nsteps_block*sim.dt/1000.0  #  time length of previous block of simulation TODO: precalcualte
         n_gids = 0
@@ -155,8 +182,7 @@ class FeedbackLoop(SimulatorMod):
             n_gids += 1
             n_spikes += len(list(tvec))  # use tvec generator. Calling this deletes the values in tvec
 
-        print('number of pgn cells: %d' %n_gids)
-        avg_spikes = n_spikes/(float(n_gids)/2)
+        avg_spikes = n_spikes/(float(n_gids))
 
         # Calculate the firing rate the the low-level neuron(s)
         fr = avg_spikes/float(block_length)
@@ -188,7 +214,7 @@ class FeedbackLoop(SimulatorMod):
             if p < 0:
                 p = 0
 
-            return p # Using a scaling factor of 6 to get correct value range
+            return p 
 
         # Grill function returning bladder afferent firing rate in units of Hz
 	    # Grill, et al. 2016
@@ -276,10 +302,10 @@ def run(config_file):
     
     ba_means = np.zeros(sim.n_steps)
     ba_stdevs = np.zeros(sim.n_steps)
-    ba_fr_conv = np.zeros((10,sim.n_steps))
+    ba_fr_conv = np.zeros((numBladaff,sim.n_steps))
     plt.figure()
     
-    for gid in np.arange(0, 10):
+    for gid in np.arange(0, numBladaff):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
             spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
@@ -295,7 +321,7 @@ def run(config_file):
 
     # Calculate mean and standard deviation for all points
     for n in range(len(ba_means)):
-        ba_means[n] /= 10
+        ba_means[n] /= numBladaff
         ba_stdevs[n] = np.std(ba_fr_conv[:,n])
 
     # Only plot one point each 1000 samples
@@ -305,16 +331,16 @@ def run(config_file):
         plt_ba_means.append(ba_means[n])   
         plt_ba_stdevs.append(ba_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(ba_means)/10,100), plt_ba_means, 
+    plt.plot(np.arange(0,len(ba_means),1000), plt_ba_means, 
                  color='b', marker='^', mfc='b', mec='b', label='Bladder Afferent')
     plt.xlabel('Time (t) [ms]')
 
     # Plot PGN firing rate
     pgn_means = np.zeros(sim.n_steps)
     pgn_stdevs = np.zeros(sim.n_steps)
-    pgn_fr_conv = np.zeros((10,sim.n_steps))
+    pgn_fr_conv = np.zeros((numPGN,sim.n_steps))
 
-    for gid in np.arange(80, 90):
+    for gid in np.arange(PGN_gids, PGN_gids + numPGN):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
             spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
@@ -326,11 +352,11 @@ def run(config_file):
 
         for n in range(len(pgn_means)):
             pgn_means[n] += frs[n]
-            pgn_fr_conv[gid % 80][n] = frs[n]
+            pgn_fr_conv[gid % PGN_gids][n] = frs[n]
 
     # Calculate mean and standard deviation for all points
     for n in range(len(pgn_means)):
-        pgn_means[n] /= 10
+        pgn_means[n] /= numPGN
         pgn_stdevs[n] = np.std(pgn_fr_conv[:,n])
 
     # Only plot one point each 1000 samples
@@ -340,15 +366,15 @@ def run(config_file):
         plt_pgn_means.append(pgn_means[n])   
         plt_pgn_stdevs.append(pgn_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(pgn_means)/10,100), plt_pgn_means,  
+    plt.plot(np.arange(0,len(pgn_means),1000), plt_pgn_means,  
                  color='g', marker='o', mfc='g', mec='g', label='PGN')
 
     # Plot EUS motor neuron firing rate
     eus_means = np.zeros(sim.n_steps)
     eus_stdevs = np.zeros(sim.n_steps)
-    eus_fr_conv = np.zeros((10,sim.n_steps))
+    eus_fr_conv = np.zeros((numEUSmn,sim.n_steps))
 
-    for gid in np.arange(110, 120):
+    for gid in np.arange(EUSmn_gids, EUSmn_gids + numEUSmn):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
             spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
@@ -360,21 +386,21 @@ def run(config_file):
 
         for n in range(len(eus_means)):
             eus_means[n] += frs[n]
-            eus_fr_conv[gid % 110][n] = frs[n]
+            eus_fr_conv[gid % EUSmn_gids][n] = frs[n]
 
     # Calculate mean and standard deviation for all points
     for n in range(len(eus_means)):
-        eus_means[n] /= 10
+        eus_means[n] /= numEUSmn
         eus_stdevs[n] = np.std(eus_fr_conv[:,n])
 
-    # Only plot one point each 2000 samples
+    # Only plot one point each 1000 samples
     plt_eus_means = []
     plt_eus_stdevs = []
-    for n in np.arange(0,len(eus_means),2000):
+    for n in np.arange(0,len(eus_means),1000):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(eus_means)/10,200), plt_eus_means, 
+    plt.plot(np.arange(0,len(eus_means),1000), plt_eus_means, 
                  color='k', marker='D', mfc='k', mec='k', label='EUS Motor Neurons')
     plt.xlabel('Time (t) [ms]')
     plt.ylabel('Neuron Firing Rate (FR) [Hz]')
