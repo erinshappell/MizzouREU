@@ -1,7 +1,10 @@
 import numpy as np
 from bmtk.builder.networks import NetworkBuilder
 from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
+import math
+import random
 
+random.seed(42)
 output_dir='network'
 
 #######################################################################
@@ -113,198 +116,310 @@ def one_to_one(source, target):
 
     return tmp_nsyn
 
+
+def percent_connector(source,target,percent):
+    """
+    For connections where types don't have the same number of cells
+    And positions are undefined for one type
+    """
+    sid = source.node_id
+    tid = target.node_id
+    source_name = source['pop_name']
+    target_name = target['pop_name']
+
+    if random.random() < (float(percent)/100):
+        print("connecting {} cell {} to {} cell {}".format(source_name,sid,target_name,tid))
+        return 1
+    else:
+        return 0
+
+def conn_props(source,target,mu,sigma):
+    """
+    Simply add connection properties as normal
+    https://github.com/AllenInstitute/bmtk/blob/develop/docs/tutorial/NetworkBuilder_Intro.ipynb
+
+    Can also adjust weights before running the network.
+    See https://github.com/AllenInstitute/bmtk/blob/develop/docs/tutorial/02_single_cell_syn.ipynb
+    Section 5
+    If done this way the function will need to be imported in the run script, consider refactoring?
+    """
+
+    #syn_weight = np.random.lognormal(mu,sigma)
+    syn_weight = mu
+
+    return syn_weight,
+
+
 # Add connections -----------------------------------------
 # Blad afferent --> INd (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='IND'),
+conn = net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 
 # EUS afferent --> INd (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IND'),
+conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
-                   syn_weight=10.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':10.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # PAG afferent --> INd (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IND'),
+conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # INd --> PGN (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='IND'), target=net.nodes(pop_name='PGN'),
+conn = net.add_edges(source=net.nodes(pop_name='IND'), target=net.nodes(pop_name='PGN'),
                    connection_rule=one_to_one,
-                   syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':16.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # Blad afferent --> Hypogastric (Hou et al. 2014)
-net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='Hypo'),
+conn = net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='Hypo'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 # Hypogastric --> IMG (Beckel et al. 2015)
-net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'),
+conn = net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 ## STSP synapse ##
 # EUS afferent --> INm+ (Grill et al. 2016) **Low pass filter**
-net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
+conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
-                   syn_weight=0.5, # Using value from Tyler's NB
+                   #syn_weight=0.5, # Using value from Tyler's NB
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='stsp.json', 
                    model_template='Exp2Syn1_STSP')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':0.5,'sigma':1},
+                    dtypes=[np.float])
+
 # PAG afferent --> INm+ (Source?)
 # Using this connection instead of synaptic depression for low pass filtering
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
+conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=one_to_one,
-                   syn_weight=11.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':11.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # EUS afferent --> INm-(Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
+conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
                    connection_rule=one_to_one,
-                   syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':16.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # INm+ --> PGN (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='INmplus'), target=net.nodes(pop_name='PGN'),
+conn = net.add_edges(source=net.nodes(pop_name='INmplus'), target=net.nodes(pop_name='PGN'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 # INm- --> PGN (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='INmminus'), target=net.nodes(pop_name='PGN'),
+conn = net.add_edges(source=net.nodes(pop_name='INmminus'), target=net.nodes(pop_name='PGN'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='GABA_InhToExc.json',
                    model_template='Exp2Syn')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 # PGN --> MPG (Beckel et al. 2015)
-net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='MPG'),
+conn = net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='MPG'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 # PGN --> FB (Grill et al. 2016)
-net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='FB'),
+conn = net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='FB'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # FB --> INd (Grill et al. 2016)
 net.add_edges(source=net.nodes(pop_name='FB'), target=net.nodes(pop_name='IND'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # MPG --> Bladder MN (Beckel et al. 2015)
-net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladmn'),
+conn = net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladmn'),
                    connection_rule=one_to_one,
-                   syn_weight=16.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':16.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # IMG --> Bladder MN (Beckel et al. 2015)
-net.add_edges(source=net.nodes(pop_name='IMG'), target=net.nodes(pop_name='Bladmn'),
+conn = net.add_edges(source=net.nodes(pop_name='IMG'), target=net.nodes(pop_name='Bladmn'),
                    connection_rule=one_to_one,
-                   syn_weight=10.0e-03, 
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':10.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # PAG aff --> Hypogastric (de Groat, et al. 2015)
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='Hypo'),
+conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='Hypo'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # PAG aff --> EUS MN (Shefchyk et al. 2001)
-net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSmn'),
+conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='GABA_InhToInh.json',
                    model_template='Exp2Syn')
 
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
+
 # EUS afferent --> EUS MN (Beckel et al. 2015)
-net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='EUSmn'),
+conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=one_to_one,
-                   syn_weight=12.0e-03,
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
                    dynamics_params='AMPA_ExcToExc.json',
                    model_template='Exp2Syn')
+
+conn.add_properties(['syn_weight'],
+                    rule=conn_props,
+                    rule_params={'mu':12.0e-3,'sigma':1},
+                    dtypes=[np.float])
 
 # Connect virtual cells to EUS, Bladder, and PAG/PMC
 Blad_aff_virt = NetworkBuilder('Blad_aff_virt') # Virtual cells delivering input to Bladder
