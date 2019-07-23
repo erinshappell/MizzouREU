@@ -8,7 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from neuron import h
 import statistics as stat
-from build_network import conn_props
 
 # Import the synaptic depression/facilitation model
 import synapses
@@ -16,10 +15,9 @@ synapses.load()
 
 # Create lists for firing rates, bladder volumes, and bladder pressures
 times = []
-pgn_frs = []
 b_vols = []
 b_pres = []
-b_aff_frs = []
+
 
 press_thres = 40 # cm H20
                  # Lingala, et al. 2016
@@ -157,7 +155,8 @@ class FeedbackLoop(SimulatorMod):
             n_gids += 1
             n_spikes += len(list(tvec))  # use tvec generator. Calling this deletes the values in tvec
 
-        avg_spikes = n_spikes/float(n_gids)
+        print('number of pgn cells: %d' %n_gids)
+        avg_spikes = n_spikes/(float(n_gids)/2)
 
         # Calculate the firing rate the the low-level neuron(s)
         fr = avg_spikes/float(block_length)
@@ -246,10 +245,8 @@ class FeedbackLoop(SimulatorMod):
 
             # Save values in appropriate lists
             times.append(tvec[0])
-            pgn_frs.append(fr)
             b_vols.append(vol)
             b_pres.append(p)
-            b_aff_frs.append(bladaff_fr)
 
             # Set the activity of high-level neuron
             self._activate_hln(sim, block_interval, bladaff_fr)
@@ -308,8 +305,8 @@ def run(config_file):
         plt_ba_means.append(ba_means[n])   
         plt_ba_stdevs.append(ba_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(ba_means)/10,100), plt_ba_means, plt_ba_stdevs, 
-                 color='b', marker='^', mfc='b', mec='b', ecolor='r', label='Bladder Afferent')
+    plt.plot(np.arange(0,len(ba_means)/10,100), plt_ba_means, 
+                 color='b', marker='^', mfc='b', mec='b', label='Bladder Afferent')
     plt.xlabel('Time (t) [ms]')
 
     # Plot PGN firing rate
@@ -343,8 +340,8 @@ def run(config_file):
         plt_pgn_means.append(pgn_means[n])   
         plt_pgn_stdevs.append(pgn_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(pgn_means)/10,100), plt_pgn_means, plt_pgn_stdevs, 
-                 color='g', marker='o', mfc='g', mec='g', ecolor='r', label='PGN')
+    plt.plot(np.arange(0,len(pgn_means)/10,100), plt_pgn_means,  
+                 color='g', marker='o', mfc='g', mec='g', label='PGN')
 
     # Plot EUS motor neuron firing rate
     eus_means = np.zeros(sim.n_steps)
@@ -377,8 +374,8 @@ def run(config_file):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(eus_means)/10,200), plt_eus_means, plt_eus_stdevs, 
-                 color='k', marker='D', mfc='k', mec='k', ecolor='r', label='EUS Motor Neurons')
+    plt.plot(np.arange(0,len(eus_means)/10,200), plt_eus_means, 
+                 color='k', marker='D', mfc='k', mec='k', label='EUS Motor Neurons')
     plt.xlabel('Time (t) [ms]')
     plt.ylabel('Neuron Firing Rate (FR) [Hz]')
     plt.legend()
