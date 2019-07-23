@@ -1,3 +1,12 @@
-2019-07-23 11:20:28,138 [INFO] Created log file
-2019-07-23 11:20:28,261 [INFO] Building cells.
-2019-07-23 11:20:28,381 [INFO] Building recurrent connections
+2019-07-23 14:12:41,078 [INFO] Created log file
+2019-07-23 14:12:41,188 [INFO] Building cells.
+2019-07-23 14:12:41,562 [INFO] Building recurrent connections
+2019-07-23 14:12:48,958 [INFO] Building virtual cell stimulations for Blad_spikes
+2019-07-23 14:12:49,567 [INFO] Building virtual cell stimulations for EUS_spikes
+2019-07-23 14:12:50,094 [INFO] Building virtual cell stimulations for PAG_spikes
+2019-07-23 14:12:51,235 [INFO] Running simulation for 10000.000 ms with the time step 0.100 ms
+2019-07-23 14:12:51,235 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2019-07-23 14:12:51,235 [INFO] Block save every 10000 steps
+2019-07-23 14:13:07,789 [INFO]     step:10000 t_sim:1000.00 ms
+2019-07-23 14:13:25,766 [INFO]     step:20000 t_sim:2000.00 ms
+2019-07-23 14:13:48,463 [INFO]     step:30000 t_sim:3000.00 ms

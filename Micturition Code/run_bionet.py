@@ -308,15 +308,15 @@ def run(config_file):
         plt_ba_means.append(ba_means[n])   
         plt_ba_stdevs.append(ba_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(ba_means)/10,100), plt_ba_means, plt_ba_stdevs, marker='^', mfc='b', ecolor='r')
+    plt.errorbar(np.arange(0,len(ba_means)/10,100), plt_ba_means, plt_ba_stdevs, 
+                 color='b', marker='^', mfc='b', mec='b', ecolor='r', label='Bladder Afferent')
     plt.xlabel('Time (t) [ms]')
-    plt.ylabel('Bladder Afferent Firing Rate (FR) [Hz]')
 
     # Plot PGN firing rate
     pgn_means = np.zeros(sim.n_steps)
     pgn_stdevs = np.zeros(sim.n_steps)
     pgn_fr_conv = np.zeros((10,sim.n_steps))
-    #plt.figure()
+
     for gid in np.arange(80, 90):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
@@ -343,50 +343,14 @@ def run(config_file):
         plt_pgn_means.append(pgn_means[n])   
         plt_pgn_stdevs.append(pgn_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(pgn_means)/10,100), plt_pgn_means, plt_pgn_stdevs, marker='o', mfc='g', ecolor='r')
-    #plt.xlabel('Time (t) [ms]')
-    #plt.ylabel('PGN Firing Rate (FR) [Hz]')
-
-    # Plot EUS afferent firing rate
-    # eusaff_means = np.zeros(sim.n_steps)
-    # eusaff_stdevs = np.zeros(sim.n_steps)
-    # eusaff_fr_conv = np.zeros((10,sim.n_steps))
-    # #plt.figure()
-    # for gid in np.arange(10, 20):
-    #     spikes = np.zeros(sim.n_steps, dtype=np.int)
-    #     if len(spike_trains.get_times(gid)) > 0:
-    #         spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
-    #     window_size = 10000
-    #     window = np.zeros(window_size)
-    #     window[0:window_size] = 1
-
-    #     frs = np.convolve(spikes, window)
-
-    #     for n in range(len(eusaff_means)):
-    #         eusaff_means[n] += frs[n]
-    #         eusaff_fr_conv[gid % 10][n] = frs[n]
-
-    # # Calculate mean and standard deviation for all points
-    # for n in range(len(eusaff_means)):
-    #     eusaff_means[n] /= 10
-    #     eusaff_stdevs[n] = np.std(eusaff_fr_conv[:,n])
-
-    # # Only plot one point each 2000 samples
-    # plt_eusaff_means = []
-    # plt_eusaff_stdevs = []
-    # for n in np.arange(0,len(eusaff_means),2000):
-    #     plt_eusaff_means.append(eusaff_means[n])   
-    #     plt_eusaff_stdevs.append(eusaff_stdevs[n]) 
-
-    # plt.errorbar(np.arange(0,len(eusaff_means)/10,200), plt_eusaff_means, plt_eusaff_stdevs, marker='^', ecolor='r')
-    # plt.xlabel('Time (t) [ms]')
-    # plt.ylabel('EUS Afferent Firing Rate (FR) [Hz]')
+    plt.errorbar(np.arange(0,len(pgn_means)/10,100), plt_pgn_means, plt_pgn_stdevs, 
+                 color='g', marker='o', mfc='g', mec='g', ecolor='r', label='PGN')
 
     # Plot EUS motor neuron firing rate
     eus_means = np.zeros(sim.n_steps)
     eus_stdevs = np.zeros(sim.n_steps)
     eus_fr_conv = np.zeros((10,sim.n_steps))
-    #plt.figure()
+
     for gid in np.arange(110, 120):
         spikes = np.zeros(sim.n_steps, dtype=np.int)
         if len(spike_trains.get_times(gid)) > 0:
@@ -413,10 +377,11 @@ def run(config_file):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.errorbar(np.arange(0,len(eus_means)/10,200), plt_eus_means, plt_eus_stdevs, marker='D', mfc='k', ecolor='r')
+    plt.errorbar(np.arange(0,len(eus_means)/10,200), plt_eus_means, plt_eus_stdevs, 
+                 color='k', marker='D', mfc='k', mec='k', ecolor='r', label='EUS Motor Neurons')
     plt.xlabel('Time (t) [ms]')
     plt.ylabel('Neuron Firing Rate (FR) [Hz]')
-    #plt.ylabel('EUS Motor Neuron Firing Rate (FR) [Hz]')
+    plt.legend()
 
     # Plot bladder volume and bladder pressure
     fig1, ax1_1 = plt.subplots()
