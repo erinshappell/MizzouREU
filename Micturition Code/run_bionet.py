@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from neuron import h
 import statistics as stat
+from build_network import conn_props
 
 # Import the synaptic depression/facilitation model
 import synapses
