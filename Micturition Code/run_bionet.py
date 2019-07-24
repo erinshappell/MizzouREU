@@ -124,7 +124,7 @@ class FeedbackLoop(SimulatorMod):
 
             # Create synapse
             # These values will determine how the high-level neuron behaves with the input
-            new_syn = h.Exp2Syn(0.7, cell.hobj.soma[0])
+            new_syn = h.Exp2Syn(0.5, cell.hobj.soma[0])
             new_syn.e = 0.0
             new_syn.tau1 = 1.0
             new_syn.tau2 = 3.0
@@ -141,7 +141,7 @@ class FeedbackLoop(SimulatorMod):
 
             # Create synapse
             # These values will determine how the high-level neuron behaves with the input
-            new_syn = h.Exp2Syn(0.9, cell.hobj.soma[0])
+            new_syn = h.Exp2Syn(0.5, cell.hobj.soma[0])
             new_syn.e = 0.0
             new_syn.tau1 = 1.0
             new_syn.tau2 = 3.0
@@ -182,7 +182,7 @@ class FeedbackLoop(SimulatorMod):
             n_gids += 1
             n_spikes += len(list(tvec))  # use tvec generator. Calling this deletes the values in tvec
 
-        avg_spikes = n_spikes/(float(n_gids))
+        avg_spikes = n_spikes/(float(n_gids)*3.0)
 
         # Calculate the firing rate the the low-level neuron(s)
         fr = avg_spikes/float(block_length)
@@ -321,17 +321,17 @@ def run(config_file):
 
     # Calculate mean and standard deviation for all points
     for n in range(len(ba_means)):
-        ba_means[n] /= numBladaff
+        ba_means[n] /= numBladaff*2
         ba_stdevs[n] = np.std(ba_fr_conv[:,n])
 
     # Only plot one point each 1000 samples
     plt_ba_means = []
     plt_ba_stdevs = []
-    for n in np.arange(0,len(ba_means),1000):
+    for n in np.arange(0,len(ba_means), 1000):
         plt_ba_means.append(ba_means[n])   
         plt_ba_stdevs.append(ba_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(ba_means),1000), plt_ba_means, 
+    plt.plot(np.arange(0,len(ba_means)/10,100), plt_ba_means, 
                  color='b', marker='^', mfc='b', mec='b', label='Bladder Afferent')
     plt.xlabel('Time (t) [ms]')
 
@@ -356,7 +356,7 @@ def run(config_file):
 
     # Calculate mean and standard deviation for all points
     for n in range(len(pgn_means)):
-        pgn_means[n] /= numPGN
+        pgn_means[n] /= numPGN*2
         pgn_stdevs[n] = np.std(pgn_fr_conv[:,n])
 
     # Only plot one point each 1000 samples
@@ -366,7 +366,7 @@ def run(config_file):
         plt_pgn_means.append(pgn_means[n])   
         plt_pgn_stdevs.append(pgn_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(pgn_means),1000), plt_pgn_means,  
+    plt.plot(np.arange(0,len(pgn_means)/10,100), plt_pgn_means,  
                  color='g', marker='o', mfc='g', mec='g', label='PGN')
 
     # Plot EUS motor neuron firing rate
@@ -390,7 +390,7 @@ def run(config_file):
 
     # Calculate mean and standard deviation for all points
     for n in range(len(eus_means)):
-        eus_means[n] /= numEUSmn
+        eus_means[n] /= numEUSmn*2
         eus_stdevs[n] = np.std(eus_fr_conv[:,n])
 
     # Only plot one point each 1000 samples
@@ -400,7 +400,7 @@ def run(config_file):
         plt_eus_means.append(eus_means[n])   
         plt_eus_stdevs.append(eus_stdevs[n]) 
 
-    plt.plot(np.arange(0,len(eus_means),1000), plt_eus_means, 
+    plt.plot(np.arange(0,len(eus_means)/10,100), plt_eus_means, 
                  color='k', marker='D', mfc='k', mec='k', label='EUS Motor Neurons')
     plt.xlabel('Time (t) [ms]')
     plt.ylabel('Neuron Firing Rate (FR) [Hz]')
@@ -423,6 +423,112 @@ def run(config_file):
     ax2_1.tick_params(axis='y', labelcolor=color)
 
     fig1.tight_layout()  # otherwise the right y-label is slightly clipped
+
+    # Plot interneurons and EUS afferent firing rates
+    inmm_means = np.zeros(sim.n_steps)
+    inmm_stdevs = np.zeros(sim.n_steps)
+    inmm_fr_conv = np.zeros((numINmminus,sim.n_steps))
+    plt.figure()
+    
+    for gid in np.arange(INmminus_gids, INmminus_gids + numINmminus):
+        spikes = np.zeros(sim.n_steps, dtype=np.int)
+        if len(spike_trains.get_times(gid)) > 0:
+            spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
+        window_size = 10000
+        window = np.zeros(window_size)
+        window[0:window_size] = 1
+
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(ba_means)):
+            inmm_means[n] += frs[n]
+            inmm_fr_conv[gid % INmminus_gids][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(ba_means)):
+        inmm_means[n] /= numINmminus
+        inmm_stdevs[n] = np.std(inmm_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_inmm_means = []
+    plt_inmm_stdevs = []
+    for n in np.arange(0,len(inmm_means), 1000):
+        plt_inmm_means.append(inmm_means[n])   
+        plt_inmm_stdevs.append(inmm_stdevs[n]) 
+
+    plt.plot(np.arange(0,len(inmm_means)/10,100), plt_inmm_means, 
+                 color='b', marker='^', mfc='b', mec='b', label='INm-')
+    plt.xlabel('Time (t) [ms]')
+
+    inmp_means = np.zeros(sim.n_steps)
+    inmp_stdevs = np.zeros(sim.n_steps)
+    inmp_fr_conv = np.zeros((numINmplus,sim.n_steps))
+    
+    for gid in np.arange(INmplus_gids, INmplus_gids + numINmplus):
+        spikes = np.zeros(sim.n_steps, dtype=np.int)
+        if len(spike_trains.get_times(gid)) > 0:
+            spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
+        window_size = 10000
+        window = np.zeros(window_size)
+        window[0:window_size] = 1
+
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(inmp_means)):
+            inmp_means[n] += frs[n]
+            inmp_fr_conv[gid % INmplus_gids][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(inmp_means)):
+        inmp_means[n] /= numINmplus
+        inmp_stdevs[n] = np.std(inmp_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_inmp_means = []
+    plt_inmp_stdevs = []
+    for n in np.arange(0,len(inmp_means), 1000):
+        plt_inmp_means.append(inmp_means[n])   
+        plt_inmp_stdevs.append(inmp_stdevs[n]) 
+
+    plt.plot(np.arange(0,len(inmp_means)/10,100), plt_inmp_means, 
+                 color='r', marker='^', mfc='r', mec='r', label='INm+')
+    plt.xlabel('Time (t) [ms]')
+
+    eus_means = np.zeros(sim.n_steps)
+    eus_stdevs = np.zeros(sim.n_steps)
+    eus_fr_conv = np.zeros((numEUSaff,sim.n_steps))
+    
+    for gid in np.arange(EUS_gids, EUS_gids + numEUSaff):
+        spikes = np.zeros(sim.n_steps, dtype=np.int)
+        if len(spike_trains.get_times(gid)) > 0:
+            spikes[(spike_trains.get_times(gid)/sim.dt).astype(np.int)] = 1
+        window_size = 10000
+        window = np.zeros(window_size)
+        window[0:window_size] = 1
+
+        frs = np.convolve(spikes, window)
+
+        for n in range(len(eus_means)):
+            eus_means[n] += frs[n]
+            eus_fr_conv[gid % EUS_gids][n] = frs[n]
+
+    # Calculate mean and standard deviation for all points
+    for n in range(len(eus_means)):
+        eus_means[n] /= numEUSaff
+        eus_stdevs[n] = np.std(eus_fr_conv[:,n])
+
+    # Only plot one point each 1000 samples
+    plt_eus_means = []
+    plt_eus_stdevs = []
+    for n in np.arange(0,len(eus_means), 1000):
+        plt_eus_means.append(eus_means[n])   
+        plt_eus_stdevs.append(eus_stdevs[n]) 
+
+    plt.plot(np.arange(0,len(eus_means)/10,100), plt_eus_means, 
+                 color='m', marker='^', mfc='m', mec='m', label='EUS Afferent')
+    plt.xlabel('Time (t) [ms]')
+    plt.ylabel('Neuron Firing Rate (FR) [Hz]')
+    plt.legend()
 
     plt.show()
 

@@ -16,19 +16,19 @@ print("\nCreating Cells")
 net = NetworkBuilder('LUT')
 
 # Specify number of cells in each population --------------
-numBladaff  = 10 # 0 - 249
-numEUSaff   = 10 # 250 - 499
-numPAGaff   = 10 # 500 - 749
-numIND      = 10  # 750 - 774
-numHypo     = 10  # 775 - 799
-numINmplus  = 10  # 800 - 824
-numINmminus = 10  # 825 - 849
-numPGN      = 10  # 850 - 874
-numFB       = 10  # 875 - 899
-numIMG      = 10 # 900 - 1149
-numMPG      = 10 # 1150 - 1399
-numEUSmn    = 10  # 1400 - 1424
-numBladmn   = 10  # 1425 - 1449
+numBladaff  = 10
+numEUSaff   = 10 
+numPAGaff   = 10
+numIND      = 10  
+numHypo     = 10  
+numINmplus  = 10  
+numINmminus = 10 
+numPGN      = 10  
+numFB       = 10  
+numIMG      = 10
+numMPG      = 10
+numEUSmn    = 10 
+numBladmn   = 10
 
 # Create the nodes ----------------------------------------
 net.add_nodes(N=numBladaff, level='high',pop_name='Bladaff',model_type='biophysical',model_template='hoc:PUD',morphology='blank.swc')
@@ -204,7 +204,7 @@ def conn_props(source,target,mu,sigma):
 # Blad afferent --> INd (Grill et al. 2016)
 conn = net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -219,7 +219,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # EUS afferent --> INd (Grill et al. 2016)
 conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -234,7 +234,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # PAG afferent --> INd (Grill et al. 2016)
 conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='IND'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -264,7 +264,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # Blad afferent --> Hypogastric (Hou et al. 2014)
 conn = net.add_edges(source=net.nodes(pop_name='Bladaff'), target=net.nodes(pop_name='Hypo'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -279,7 +279,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # Hypogastric --> IMG (Beckel et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='Hypo'), target=net.nodes(pop_name='IMG'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -295,7 +295,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # EUS afferent --> INm+ (Grill et al. 2016) **Low pass filter**
 conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -311,7 +311,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # Using this connection instead of synaptic depression for low pass filtering
 conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='INmplus'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -326,7 +326,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # EUS afferent --> INm-(Grill et al. 2016)
 conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='INmminus'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -371,7 +371,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # PGN --> MPG (Beckel et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='PGN'), target=net.nodes(pop_name='MPG'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -416,7 +416,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # MPG --> Bladder MN (Beckel et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='MPG'), target=net.nodes(pop_name='Bladmn'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -431,7 +431,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # IMG --> Bladder MN (Beckel et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='IMG'), target=net.nodes(pop_name='Bladmn'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -446,7 +446,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # PAG aff --> Hypogastric (de Groat, et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='Hypo'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -461,7 +461,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # PAG aff --> EUS MN (Shefchyk et al. 2001)
 conn = net.add_edges(source=net.nodes(pop_name='PAGaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
@@ -476,7 +476,7 @@ conn.add_properties(names=['syn_weight', 'sec_id', 'sec_x'],
 # EUS afferent --> EUS MN (Beckel et al. 2015)
 conn = net.add_edges(source=net.nodes(pop_name='EUSaff'), target=net.nodes(pop_name='EUSmn'),
                    connection_rule=percent_connector,
-                   connection_params={'percent':10.0},
+                   connection_params={'percent':100.0},
                    target_sections=['somatic'],
                    delay=2.0,
                    distance_range=[0.0, 300.0],
